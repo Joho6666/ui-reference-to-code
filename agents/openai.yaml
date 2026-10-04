@@ -1,5 +1,4 @@
 interface:
-  display_name: "UI 灵感到落地"
-  short_description: "从设计参考到代码落地，结合浏览器、设计技能和组件 MCP 打磨界面"
-  default_prompt: "请用 $ui-reference-to-code 研究适合当前网站的设计参考，提炼可执行方案，并按我的任务范围实现与检查界面。"
-
+  display_name: "UI 灵感到落地 v2"
+  short_description: "将截图与网站参考转成设计系统和代码，通过浏览器比较与视觉修复完成界面"
+  default_prompt: "请用 $ui-reference-to-code 判断任务模式，拆解参考并适配当前项目，完成设计、代码及桌面与手机的浏览器视觉检查。"
