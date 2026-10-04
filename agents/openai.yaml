@@ -1,0 +1,5 @@
+interface:
+  display_name: "UI 灵感到落地"
+  short_description: "从设计参考到代码落地，结合浏览器、设计技能和组件 MCP 打磨界面"
+  default_prompt: "请用 $ui-reference-to-code 研究适合当前网站的设计参考，提炼可执行方案，并按我的任务范围实现与检查界面。"
+
