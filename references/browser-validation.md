@@ -1,82 +1,51 @@
-# Browser Validation — Visual QA Loop
+# Browser capture and QA
 
-B/C/D 及 E/F 实现都经过本流程。输入：运行代码、保留基线、参考规格 / 设计系统、组件映射。输出：桌面和手机截图、关键行为、Visual Difference Report、分数及交付状态。
+The browser tool owns navigation and interaction; this skill owns the capture contract. Use any available runtime, but do not treat a DOM snapshot as a screenshot or a script recording as an observed design. Keep one capture per URL, route, viewport, DPR, theme, state and scroll position.
 
-## 1. 运行与采样
+## Run and evidence setup
 
-使用项目实际启动脚本或适合静态项目的 HTTP 服务；保存命令、工作目录、预览 URL 和代码版本。不把 `file://` 成功视为模块、接口或部署验证。
+A multi-round task stores its immutable artifacts below `.ui-design/runs/<run-id>/`. Create the run before editing so the initial selected source files establish a baseline:
 
-读取当前可用浏览器技能，确认可控页面和实际 API，复用当前任务空间。桌面采用参考视口或项目目标尺寸；手机采用已知目标设备，缺失时可用约 390 CSS px 宽。尺寸是采样选择，不是通用设计参数。
-
-等待字体、图片和相关布局稳定后截图。记录 viewport/DPR、scroll/anchor、theme、state、截图路径及观察范围。换视口后重新进入目标位置，避免旧滚动造成裁切。对动效比较固定相同阶段或观察终态；不得通过禁用所有动效掩盖交互问题。
-
-截图必须实际查看。DOM 支持语义和状态判断；canvas 元素、iframe load、无报错都不能证明可见画面符合设计。
-
-## 2. 每轮操作
-
-```text
-实现 → 启动 / 复用预览 → 桌面截图与操作 → 手机截图与操作
-     → 同状态比较 → 差异分类 / 评分 → 修 Critical / Major
-     → 重拍受影响视口 → 更新报告
+```sh
+python3 scripts/evidence.py create-run --project . --url http://localhost:3000/
+python3 scripts/evidence.py list --run .ui-design/runs/<run-id>
 ```
 
-默认初检后最多 3 轮有针对性的修复（总观察轮数可至 4），用户明确另定预算时沿用；每轮记录修改及前后差异。第一轮已达完成条件可结束，避免为轮数重复检查。后续只重查受影响区域和相关回归；先前有效且代码未影响的手机 / 行为证据可沿用并标明版本。
+`project_revision` contains HEAD (when available), a `dirty` indicator and SHA-256 hashes for the selected files. The default selection is tracked and non-ignored untracked project files, excluding `.git`, `.ui-design`, caches and OS metadata. `--files` selects a deliberate subset. Dirty work is supported; any change to HEAD or a selected file invalidates evidence. Changes outside a selected subset do not.
 
-无进展或同一阻塞重复时定位字体、素材、主题、浏览器控制或输入限制。用已有替代路径继续；达到约定修复预算仍有低分或严重问题，交付待修状态与具体下一步，不能人为抬分或把暂停称完成。
-
-## 3. 当前修改范围检查
-
-| 关注点 | 实际观察 / 操作 |
-| --- | --- |
-| Hero / 标题 | 溢出、换行、阅读顺序、关键图像与按钮；检查真实加载字体 |
-| Container / spacing | 容器上限、左右边距、节间距、卡片密度、对齐与视觉重量 |
-| Nav / sticky | 跳转后目标可见、固定导航不遮挡、手机展开与关闭 |
-| 图片 | 主体焦点、比例与裁切、加载失败替代；不会把示意图当项目截图 |
-| 交互 | 搜索命中 / 空结果 / 清空、tabs、链接、提交、卡片和焦点路径 |
-| 响应式 | 堆叠、菜单、横向溢出、触屏替代；发现问题再补断点附近 |
-| 动效 | trigger、终态、取消、reduced-motion；hover 不阻止点击 / 滚动 |
-| 可访问性 | 修改区域的语义、键盘、focus、文字对比、alt、touch target |
-
-对比度能计算时记录值及目标；不能仅靠感觉宣称通过。触屏目标依据项目可访问性规范，缺少规范时优先至少 24 CSS px 或足够间距，主要按钮更宽松。不要把装饰图的空 alt 当错误，也不要给功能图缺失替代文本找借口。
-
-## 4. 证据不足的退路
-
-浏览器工具缺失 / 失联：先发现已有能力、控制权和服务状态；可使用当前允许的浏览器自动化或已有截图。没有可用运行画面时完成构建、语法、代码及现有功能检查，关键视觉维度保持 unverified，记录恢复动作。
-
-用户手动提供截图可作为观察证据，但需标明版本、视口与未操作状态；它不能证明尚未测试的点击。Pixel Fidelity 缺源截图时用可访问源材料推进并标记未知，不能给出“像素还原已完成”。
-
-## 5. 可持久化 QA JSON
-
-聊天任务可直接写报告；多轮任务按需存 `.ui-design/qa.json`，供 `scripts/qa_gate.py` 判定。下面是**格式样例，无真实验证结果**；真实任务替换全部证据与状态。
+Capture the page in the browser, view the screenshot, then register it. Screenshot files are copied into the run and become immutable. A capture receipt can be exported by the browser adapter or assembled from browser-reported values:
 
 ```json
 {
-  "schema_version": 1,
-  "mode": "D",
-  "modifiers": [],
-  "scope": "homepage hero and project cards",
+  "run_id": "the-run-folder-name",
   "iteration": 1,
-  "code_checks": "passed",
-  "preservation": "passed",
-  "browser": {
-    "desktop": {"observed": false, "screenshot": "", "viewport": [1440, 900]},
-    "mobile": {"observed": false, "screenshot": "", "viewport": [390, 844]}
-  },
-  "comparison": {"reviewed": false, "kind": "design-spec", "baseline": "", "implemented": "", "same_conditions": false},
-  "dimensions": {
-    "layout": {"applicable": true, "score": null, "evidence": []},
-    "typography": {"applicable": true, "score": null, "evidence": []},
-    "color": {"applicable": true, "score": null, "evidence": []},
-    "component": {"applicable": true, "score": null, "evidence": []},
-    "responsive": {"applicable": true, "score": null, "evidence": []},
-    "interaction": {"applicable": true, "score": null, "evidence": []}
-  },
-  "differences": []
+  "url": "http://localhost:3000/",
+  "route": "/",
+  "viewport": [1440, 900],
+  "dpr": 1,
+  "theme": "light",
+  "state": "default",
+  "scroll": [0, 0],
+  "captured_at": "2026-10-04T12:00:00Z",
+  "source_revision": "fingerprint returned by evidence.py snapshot helper",
+  "regions": {"hero": [0, 0, 1440, 620]}
 }
 ```
 
-differences 项：`id、severity (Critical/Major/Minor)、resolved、location、evidence、description`。不适用维度设置 `applicable:false、score:null、reason:具体原因`；layout/responsive 为实现必查，不能豁免。至少执行一次相关关键行为，保留基线状态必须有真实依据。
+Read the run fingerprint with `python3 scripts/evidence.py snapshot --run ...`; compare it before and after the capture. Register with `scripts/evidence.py add --run ... --path capture.png --id impl-desktop --type screenshot --role implementation --capture capture.json --observer agent --iteration 1`. Use `observer human` for a screenshot a person actually inspected; `unobserved` keeps the bytes but cannot support a visual score. An implementation receipt must use the current run fingerprint. Reference artifacts can use external source revisions but must still be present in the run. `regions` are named design regions with pixel-space `[x,y,width,height]` rectangles in the image; use the same IDs in the design spec, component map, captures, QA and differences.
 
-`comparison.kind`：E 使用 reference，其他使用 reference 或 design-spec。E 要求 same_conditions；手机无源样本时单独标 adapted，不假造手机对照。
+Capture `viewport` in CSS pixels and verify the PNG pixels are exactly `viewport × DPR`. Do not silently resize screenshots. A reference from a different route can be compared only through an explicitly shared `region_id` and the same `viewport`, DPR, theme, state and scroll. Pixel Fidelity requires reference screenshots for the compared desktop and mobile regions. F Inspiration compares a design spec to the implementation and does not score pixel similarity.
 
-执行 `python3 scripts/qa_gate.py <qa.json>`，返回 verified / needs-repair / unverified / invalid-report。脚本检查字段、证据引用和阈值；不会检查图片像素、证明报告真实性或替代 Agent 实际视觉观察。
+## Preserve scope and record checks
+
+Before edits, write `.ui-design/runs/<run-id>/preservation.json` with only relevant routes, links, API contracts, copy, data fields and functional behaviors. For D, an empty list is insufficient. For B/C with no existing contract, an explicit reason can describe why no baseline applies. Register versioned `check-result` JSON artifacts; each item check names the baseline item, repeats its expected value, records the observed value, a boolean outcome and the actual check method. For interactions use `browser-interaction`; for content/links use the observed DOM or a source-specific test. Command checks record the actual command and exit status. These result files and browser actions remain declarations from the executing environment, not cryptographic attestations.
+
+## Compare and repair
+
+QA v2 is stored as `.ui-design/runs/<run-id>/qa-<iteration>.json`; its `browser.desktop/mobile`, score evidence, comparison and difference fields reference registered artifact IDs. A resolved Critical/Major difference points to a later, changed implementation screenshot, with the same capture conditions and a recorded review. Keep earlier QA iterations in the run; the gate does not allow an unresolved serious difference to disappear from later reports.
+
+Run `python3 scripts/qa_gate.py .ui-design/runs/<run-id>/qa-<iteration>.json`. Exit codes: 0 verified, 1 needs-repair, 2 unverified, 3 invalid report. A score below 7 or a failed content/function check needs repair. Missing, stale, unobserved or unsupported evidence is unverified. Include recognized failure codes from the QA v2 schema to explain unavailable reference, browser, font or assets and regressions.
+
+`python3 scripts/visual_diff.py reference.png implementation.png --output diff.png` optionally uses Pillow. It refuses mismatched pixel dimensions and can crop a declared region. Its changed-pixel ratio and bounding box are evidence for investigation, not a design score. Without Pillow, compare the inspected images manually; run/PNG validation and the QA gate use only Python's standard library.
+
+See [contracts.json](../schemas/contracts.json), [QA example](../examples/qa-unverified.json) and [visual scoring](visual-fidelity.md). A valid schema or gate result verifies file identity and stated conditions, not whether a person actually looked at the image, whether the design is good, or whether a check-result is truthful.

@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "intent": "Illustrative light editorial hero; adapt typography and preserve actions",
+  "regions": [
+    {
+      "region_id": "hero",
+      "rule": "Readable heading, generous whitespace, CTA wraps on mobile",
+      "component": "existing hero section"
+    }
+  ]
+}

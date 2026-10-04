@@ -1,0 +1,25 @@
+name: Skill evidence checks
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python: ['3.9', '3.12']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - run: python -m pip install -r requirements-dev.txt -r requirements-visual.txt
+      - run: python -m unittest discover -s tests -v
+      - run: python -m compileall -q scripts tests
+      - run: node --check tests/browser_evaluation.mjs
+      - run: python scripts/evidence.py --help && python scripts/qa_gate.py --help && python scripts/visual_diff.py --help
+      - name: Core checks without site packages
+        run: python -S -m unittest discover -s tests -v

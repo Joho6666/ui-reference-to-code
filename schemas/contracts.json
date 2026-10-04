@@ -1,0 +1,801 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Joho6666/ui-reference-to-code/contracts",
+  "$defs": {
+    "revision": {
+      "type": "object",
+      "properties": {
+        "commit": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "dirty": {
+          "type": "boolean"
+        },
+        "selection": {
+          "enum": [
+            "all",
+            "selected"
+          ]
+        },
+        "files": {
+          "type": "object",
+          "minProperties": 1,
+          "additionalProperties": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          }
+        },
+        "fingerprint": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      },
+      "required": [
+        "commit",
+        "dirty",
+        "selection",
+        "files",
+        "fingerprint"
+      ],
+      "additionalProperties": false
+    },
+    "run": {
+      "type": "object",
+      "properties": {
+        "schema_version": {
+          "const": 1
+        },
+        "run_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "project_revision": {
+          "$ref": "#/$defs/revision"
+        },
+        "preview_url": {
+          "type": "string",
+          "minLength": 1
+        },
+        "project_path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "created_at": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "schema_version",
+        "run_id",
+        "project_revision",
+        "preview_url",
+        "project_path",
+        "created_at"
+      ],
+      "additionalProperties": false
+    },
+    "capture": {
+      "type": "object",
+      "properties": {
+        "run_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "iteration": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "url": {
+          "type": "string",
+          "minLength": 1
+        },
+        "route": {
+          "type": "string",
+          "minLength": 1
+        },
+        "viewport": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "dpr": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "theme": {
+          "enum": [
+            "light",
+            "dark"
+          ]
+        },
+        "state": {
+          "type": "string",
+          "minLength": 1
+        },
+        "scroll": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "minimum": 0
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "captured_at": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source_revision": {
+          "type": "string",
+          "minLength": 1
+        },
+        "regions": {
+          "type": "object",
+          "minProperties": 1,
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "minItems": 4,
+            "maxItems": 4
+          }
+        }
+      },
+      "required": [
+        "run_id",
+        "iteration",
+        "url",
+        "route",
+        "viewport",
+        "dpr",
+        "theme",
+        "state",
+        "scroll",
+        "captured_at",
+        "source_revision",
+        "regions"
+      ],
+      "additionalProperties": false
+    },
+    "artifact": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "run_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "iteration": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "type": {
+          "enum": [
+            "screenshot",
+            "design-spec",
+            "check-result",
+            "diff"
+          ]
+        },
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "role": {
+          "enum": [
+            "reference",
+            "implementation"
+          ]
+        },
+        "bytes": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "captured_at": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source_revision": {
+          "type": "string",
+          "minLength": 1
+        },
+        "observed": {
+          "type": "boolean"
+        },
+        "observer": {
+          "enum": [
+            "agent",
+            "human",
+            "unobserved"
+          ]
+        },
+        "capture": {
+          "$ref": "#/$defs/capture"
+        }
+      },
+      "required": [
+        "id",
+        "run_id",
+        "iteration",
+        "type",
+        "path",
+        "role",
+        "bytes",
+        "sha256",
+        "captured_at",
+        "source_revision",
+        "observed",
+        "observer"
+      ],
+      "additionalProperties": false
+    },
+    "evidence": {
+      "type": "object",
+      "properties": {
+        "schema_version": {
+          "const": 1
+        },
+        "run_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "project_revision": {
+          "$ref": "#/$defs/revision"
+        },
+        "preview_url": {
+          "type": "string",
+          "minLength": 1
+        },
+        "captured_at": {
+          "type": "string",
+          "minLength": 1
+        },
+        "artifacts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/artifact"
+          }
+        }
+      },
+      "required": [
+        "schema_version",
+        "run_id",
+        "project_revision",
+        "preview_url",
+        "captured_at",
+        "artifacts"
+      ],
+      "additionalProperties": false
+    },
+    "proof": {
+      "type": "object",
+      "properties": {
+        "artifact_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "region_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "observation": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "artifact_id",
+        "region_id",
+        "observation"
+      ],
+      "additionalProperties": false
+    },
+    "score": {
+      "type": "object",
+      "properties": {
+        "applicable": {
+          "type": "boolean"
+        },
+        "score": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 10
+        },
+        "confidence": {
+          "enum": [
+            "high",
+            "medium",
+            "low",
+            "none"
+          ]
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/proof"
+          }
+        }
+      },
+      "required": [
+        "applicable",
+        "score",
+        "confidence",
+        "reason",
+        "evidence"
+      ],
+      "additionalProperties": false
+    },
+    "comparison": {
+      "type": "object",
+      "properties": {
+        "region_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "kind": {
+          "enum": [
+            "reference",
+            "design-spec"
+          ]
+        },
+        "reference_artifact": {
+          "type": "string",
+          "minLength": 1
+        },
+        "implementation_artifact": {
+          "type": "string",
+          "minLength": 1
+        },
+        "reviewed": {
+          "type": "boolean"
+        },
+        "observation": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "region_id",
+        "kind",
+        "reference_artifact",
+        "implementation_artifact",
+        "reviewed",
+        "observation"
+      ],
+      "additionalProperties": false
+    },
+    "difference": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "severity": {
+          "enum": [
+            "Critical",
+            "Major",
+            "Minor"
+          ]
+        },
+        "region_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "expected": {
+          "type": "string",
+          "minLength": 1
+        },
+        "observed": {
+          "type": "string",
+          "minLength": 1
+        },
+        "reference_artifact": {
+          "type": "string",
+          "minLength": 1
+        },
+        "implementation_artifact": {
+          "type": "string",
+          "minLength": 1
+        },
+        "resolved": {
+          "type": "boolean"
+        },
+        "resolution": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "artifact_id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "observation": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "reviewed": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "artifact_id",
+                "observation",
+                "reviewed"
+              ],
+              "additionalProperties": false
+            }
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "severity",
+        "region_id",
+        "expected",
+        "observed",
+        "reference_artifact",
+        "implementation_artifact",
+        "resolved",
+        "resolution"
+      ],
+      "additionalProperties": false
+    },
+    "preservation-item": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "kind": {
+          "enum": [
+            "routes",
+            "links",
+            "api_contracts",
+            "important_copy",
+            "data_fields",
+            "functional_behaviors"
+          ]
+        },
+        "expected": {},
+        "reason": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "id",
+        "kind",
+        "expected",
+        "reason"
+      ],
+      "additionalProperties": false
+    },
+    "preservation": {
+      "type": "object",
+      "properties": {
+        "schema_version": {
+          "const": 1
+        },
+        "scope": {
+          "type": "string",
+          "minLength": 1
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/preservation-item"
+          }
+        }
+      },
+      "required": [
+        "schema_version",
+        "scope",
+        "reason",
+        "items"
+      ],
+      "additionalProperties": false
+    },
+    "design-spec": {
+      "type": "object",
+      "properties": {
+        "schema_version": {
+          "const": 1
+        },
+        "intent": {
+          "type": "string",
+          "minLength": 1
+        },
+        "regions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "region_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "rule": {
+                "type": "string",
+                "minLength": 1
+              },
+              "component": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "region_id",
+              "rule",
+              "component"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "schema_version",
+        "intent",
+        "regions"
+      ],
+      "additionalProperties": false
+    },
+    "qa": {
+      "type": "object",
+      "properties": {
+        "schema_version": {
+          "const": 2
+        },
+        "run_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "iteration": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "mode": {
+          "enum": [
+            "B",
+            "C",
+            "D"
+          ]
+        },
+        "modifiers": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "E",
+              "F"
+            ]
+          },
+          "uniqueItems": true,
+          "maxItems": 1
+        },
+        "scope": {
+          "type": "string",
+          "minLength": 1
+        },
+        "design_spec": {
+          "type": "string",
+          "minLength": 1
+        },
+        "code_checks": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "preservation_checks": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "browser": {
+          "type": "object",
+          "properties": {
+            "desktop": {
+              "type": "string",
+              "minLength": 1
+            },
+            "mobile": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "desktop",
+            "mobile"
+          ],
+          "additionalProperties": false
+        },
+        "comparisons": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/comparison"
+          }
+        },
+        "dimensions": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/score"
+          }
+        },
+        "differences": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/difference"
+          }
+        },
+        "failures": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "enum": [
+                  "REFERENCE_UNAVAILABLE",
+                  "BROWSER_UNAVAILABLE",
+                  "FONT_UNAVAILABLE",
+                  "ASSET_UNAVAILABLE",
+                  "VIEWPORT_MISMATCH",
+                  "STALE_EVIDENCE",
+                  "CONTENT_REGRESSION",
+                  "FUNCTION_REGRESSION",
+                  "VISUAL_MAJOR",
+                  "VISUAL_CRITICAL",
+                  "EVIDENCE_INVALID",
+                  "EVIDENCE_INSUFFICIENT",
+                  "CODE_CHECK_FAILED"
+                ]
+              },
+              "detail": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "code",
+              "detail"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "schema_version",
+        "run_id",
+        "iteration",
+        "mode",
+        "modifiers",
+        "scope",
+        "design_spec",
+        "code_checks",
+        "preservation_checks",
+        "browser",
+        "comparisons",
+        "dimensions",
+        "differences",
+        "failures"
+      ],
+      "additionalProperties": false
+    },
+    "check-result": {
+      "type": "object",
+      "properties": {
+        "schema_version": {
+          "const": 1
+        },
+        "run_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "iteration": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "captured_at": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source_revision": {
+          "type": "string",
+          "minLength": 1
+        },
+        "status": {
+          "enum": [
+            "passed",
+            "failed"
+          ]
+        },
+        "command": {
+          "type": "string",
+          "minLength": 1
+        },
+        "exit_code": {
+          "type": "integer"
+        },
+        "checks": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "expected": {},
+              "observed": {},
+              "passed": {
+                "type": "boolean"
+              },
+              "method": {
+                "enum": [
+                  "browser-dom",
+                  "browser-interaction",
+                  "static",
+                  "command"
+                ]
+              }
+            },
+            "required": [
+              "id",
+              "expected",
+              "observed",
+              "passed",
+              "method"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "cta_navigation": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "schema_version",
+        "run_id",
+        "iteration",
+        "captured_at",
+        "source_revision",
+        "status"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

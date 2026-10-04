@@ -1,4 +1,4 @@
-# UI Reference to Code Skill v2
+# UI Reference to Code Skill v2.1
 
 将截图、网站、Pinterest / Behance / Figma 等 UI 参考，转成设计规格、设计系统、组件计划、代码和浏览器视觉修复。适用于 Codex 的参考研究、页面制作与已有项目改版。
 
@@ -25,7 +25,7 @@ git clone https://github.com/Joho6666/ui-reference-to-code.git ~/.codex/skills/u
 
 已有同名目录时先核对来源和本地改动；从本仓库 clone 的安装可使用 `git pull --ff-only` 更新。若技能列表尚未刷新，开始新的 Codex 对话或重启应用。
 
-QA helper 使用 Python 3 标准库，无额外 Python 依赖。它不会安装浏览器、MCP 或组件库。
+Run / Evidence helpers and QA gate use Python 3 standard library. Optional image diff uses Pillow (`pip install -r requirements-visual.txt`). It does not install a browser, MCP or component library.
 
 ## Supported Inputs
 
@@ -136,6 +136,10 @@ Fidelity: responsive 6/10 based on mobile observation → needs-repair
 
 多轮工作保存 `.ui-design/record.md`。只有复杂度需要时才拆分 brief、references、design-system、component-map、implementation-plan 和 qa。多个同源页面复用一次提炼的 tokens，保留页面变体。
 
+## Evidence and Verification
+
+Each QA artifact lives under `.ui-design/runs/<run-id>/`. The gate verifies local file bytes, PNG parsing and viewport/DPR, selected source fingerprints, named artifact references, preservation results and repair captures. Scores and actual image observation remain Agent/human judgements. The [contracts](schemas/contracts.json) and [browser workflow](references/browser-validation.md) define the data format.
+
 ## Verification and Development
 
 ```sh
@@ -143,15 +147,15 @@ python3 -m unittest discover -s tests -v
 python3 scripts/qa_gate.py /path/to/qa.json
 ```
 
-报告结构见 [browser-validation.md](references/browser-validation.md)。退出码为 0 verified、1 needs-repair、2 unverified、3 invalid-report。helper 检查声明的证据引用、数据类型、阈值与严重缺陷，不能读取图像差异或证明报告真实性。
+QA v2 结构见 [browser-validation.md](references/browser-validation.md) 与 [JSON contracts](schemas/contracts.json)。退出码为 0 verified、1 needs-repair、2 unverified、3 invalid-report。Gate 会核验本地文件和采样条件；视觉评分和观察仍由 Agent / 人工完成。
 
 [行为场景](references/test-cases.md) 包含至少五个用户请求及失败信号。模型 dry-run、隔离代码执行、真实浏览器执行分别记录，不能相互替代。
 
 ## Limitations
 
-- v2 的定量拆解和评分由 Agent 依据实际观察完成，不保证自动像素级复刻。
+- 定量拆解和评分由 Agent 依据实际观察完成，不保证自动像素级复刻。
 - 无浏览器、源参考受限或字体 / 资源不可用时，完成可审阅部分并报告未验证条件。
-- 这不是自带浏览器驱动、Figma 访问权或自动视觉 diff 引擎的完整运行时。
+- 浏览器由宿主环境提供；可选 Pillow diff 只报告像素变化，不判定设计质量。
 - 不能仅靠高分证明质量；关键功能、真实内容和实际截图同时影响完成状态。
 - 部署遵循当前任务授权与托管工作流，研究模式不扩大到发布。
 
@@ -171,6 +175,10 @@ references/
   review-and-handoff.md          # completion and delivery states
   test-cases.md                  # behavior scenarios and actual validation
   joho-case-study.md             # historical evidence and tradeoffs
-scripts/qa_gate.py               # deterministic report completion gate
-tests/test_qa_gate.py            # meaningful gate failure-path tests
+schemas/contracts.json          # versioned Run / Evidence / QA contracts
+scripts/evidence.py              # run, artifact and PNG validation helper
+scripts/qa_gate.py               # artifact-aware completion gate
+scripts/visual_diff.py           # optional Pillow pixel signal
+tests/                             # evidence, gate, schema and diff tests
+.github/workflows/test.yml       # lightweight CI
 ```

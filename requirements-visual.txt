@@ -1,0 +1,2 @@
+# Optional image difference signal; core run/PNG/gate helpers use only Python stdlib.
+Pillow>=10.4,<13

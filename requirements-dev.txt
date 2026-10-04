@@ -1,0 +1,3 @@
+# Repository checks only; not required to use the skill.
+jsonschema>=4.23,<5
+PyYAML>=6,<7

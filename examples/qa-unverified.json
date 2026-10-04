@@ -1,0 +1,78 @@
+{
+  "schema_version": 2,
+  "run_id": "EXAMPLE-NOT-A-REAL-RUN",
+  "iteration": 1,
+  "mode": "D",
+  "modifiers": [
+    "F"
+  ],
+  "scope": "hero",
+  "design_spec": "adopted-spec",
+  "code_checks": [],
+  "preservation_checks": [],
+  "browser": {
+    "desktop": "impl-desktop",
+    "mobile": "impl-mobile"
+  },
+  "comparisons": [
+    {
+      "region_id": "hero",
+      "kind": "design-spec",
+      "reference_artifact": "adopted-spec",
+      "implementation_artifact": "impl-desktop",
+      "reviewed": false,
+      "observation": "Not yet compared"
+    }
+  ],
+  "dimensions": {
+    "consistency": {
+      "applicable": true,
+      "score": null,
+      "confidence": "none",
+      "reason": "Awaiting actual capture and observation",
+      "evidence": []
+    },
+    "hierarchy": {
+      "applicable": true,
+      "score": null,
+      "confidence": "none",
+      "reason": "Awaiting actual capture and observation",
+      "evidence": []
+    },
+    "usability": {
+      "applicable": true,
+      "score": null,
+      "confidence": "none",
+      "reason": "Awaiting actual capture and observation",
+      "evidence": []
+    },
+    "responsive": {
+      "applicable": true,
+      "score": null,
+      "confidence": "none",
+      "reason": "Awaiting actual capture and observation",
+      "evidence": []
+    },
+    "interaction": {
+      "applicable": true,
+      "score": null,
+      "confidence": "none",
+      "reason": "Awaiting actual capture and observation",
+      "evidence": []
+    },
+    "content": {
+      "applicable": true,
+      "score": null,
+      "confidence": "none",
+      "reason": "Awaiting actual capture and observation",
+      "evidence": []
+    }
+  },
+  "differences": [],
+  "failures": [
+    {
+      "code": "BROWSER_UNAVAILABLE",
+      "detail": "Illustrative template only; no real capture"
+    }
+  ]
+}

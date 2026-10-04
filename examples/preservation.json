@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "scope": "hero",
+  "reason": "Illustrative baseline; replace before editing",
+  "items": [
+    {
+      "id": "cta",
+      "kind": "links",
+      "expected": "#contact",
+      "reason": "Primary action destination"
+    }
+  ]
+}
