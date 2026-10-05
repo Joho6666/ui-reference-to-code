@@ -29,6 +29,8 @@ export const theme = {
     autoRotate: 0.12, // 0 disables continuous motion
     dprMax: 2,
   },
+  // optional generated/real hero imagery (see references/image-generation.md); '' = none. Path under /public.
+  assets: { heroImage: '' },
   // authored copy — replace; never reuse the reference's brand copy
   copy: {
     brand: 'Atelier',

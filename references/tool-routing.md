@@ -16,7 +16,8 @@
 | 真实数据或关系用图比表更清楚 | ECharts | 注册所需图表、数据定义、交互 | 本地文字 / 表格 / SVG 关系图 |
 | 3D 明确增强主题或必要交互 | Spline | 场景、导出、体积及替代状态 | 静态 / 原创图像及 CSS |
 | 用户给 Figma 稿或要求设计稿 / 系统迁移 | 当前环境相应 Figma 技能与工具 | 指定稿件 / 节点、截图、组件属性、资源 | 用户已给图像；不宣称读到 inaccessible 稿件 |
-| 实现后的视觉 / responsive 观察 | `scripts/capture.mjs`（Playwright）或浏览器自动化 | 桌面 / 手机证据与比较 | 按 Browser Validation 交付 unverified |
+| 实现后的视觉 / responsive 观察 | harness 浏览器自动化（ego-browser / ego-lite / playwright / 浏览器窗格）+ `scripts/page_checks.mjs`；有 Playwright 时用 `replica.mjs shoot` |
+| 素材缺口（背景、场景、纹理） | harness 内置生图（Codex `image_gen`）→ `scripts/gen_image.py`；见 [Image Generation](image-generation.md) | 桌面 / 手机证据与比较 | 按 Browser Validation 交付 unverified |
 | 当前任务需要发布 | 所选托管技能 / 工具 | 构建 / 上传状态及成功 URL | 保留可审阅本地结果，明确发布限制 |
 
 通常一个主要设计技能加针对性资料即可。已批准方案只需修局部时，直接用当前 tokens 和组件，不重新调研。

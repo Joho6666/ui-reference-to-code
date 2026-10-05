@@ -1,15 +1,17 @@
 #!/usr/bin/env node
-// Capture desktop + mobile screenshots and capture receipts for the evidence contract.
+// Playwright route: capture desktop + mobile screenshots, receipts, automated checks and a blank wow-review.
 // It never registers evidence: look at the PNGs first, then register with `evidence.py add --observer agent`.
 //
 //   node scripts/capture.mjs --url http://127.0.0.1:5173/ --run .ui-design/runs/<id> --iteration 1 [--out dir] [--settle 3500]
 //
 // Needs Playwright resolvable from the project (`npm i -D playwright`) or a global install.
+// No Playwright? Use your harness's browser tool (ego-browser, browser pane, ...) and scripts/page_checks.mjs instead.
 import { spawnSync } from 'node:child_process';
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { basename, dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { PROBE_SOURCE, evaluateProbe, receiptFor, reviewMarkdown } from './page_checks.mjs';
 
 const arg = (name, fallback) => {
   const i = process.argv.indexOf('--' + name);
@@ -39,7 +41,8 @@ try {
   try {
     ({ chromium } = createRequire(import.meta.url)('playwright'));
   } catch {
-    console.error('Playwright not found. Run `npm i -D playwright` (and `npx playwright install chromium`) in the project.');
+    console.error('Playwright not found. Run `npm i -D playwright` and `npx playwright install chromium` in the project,\n'
+      + 'or use your harness browser tool with scripts/page_checks.mjs (see docs/HARNESS_ADAPTERS.md).');
     process.exit(3);
   }
 }
@@ -72,53 +75,12 @@ try {
     await page.goto(url, { waitUntil: 'networkidle' });
     await page.waitForSelector('canvas[data-ready="true"]', { timeout: 15000 }).catch(() => {}); // no canvas = a 2D page, fine
     await page.waitForTimeout(settle);
-    const regions = await page.evaluate(() => {
-      const r = {};
-      document.querySelectorAll('[data-region]').forEach((el) => {
-        const b = el.getBoundingClientRect();
-        const x = Math.max(0, Math.round(b.x)), y = Math.max(0, Math.round(b.y));
-        const w = Math.round(Math.min(b.width, innerWidth - x)), h = Math.round(Math.min(b.height, innerHeight - y));
-        if (w > 0 && h > 0) r[el.getAttribute('data-region')] = [x, y, w, h];
-      });
-      return r;
-    });
-    const probe = await page.evaluate(() => {
-      const cta = document.querySelector('[data-cta]') || document.querySelector('.btn');
-      const h1 = document.querySelector('h1');
-      const lh = h1 ? parseFloat(getComputedStyle(h1).lineHeight) || parseFloat(getComputedStyle(h1).fontSize) * 1.1 : 0;
-      const family = h1 ? getComputedStyle(h1).fontFamily : '';
-      const first = family.split(',')[0].trim();
-      return {
-        overflowX: document.documentElement.scrollWidth - innerWidth,
-        ctaBottom: cta ? Math.round(cta.getBoundingClientRect().bottom) : null,
-        viewportH: innerHeight,
-        h1Lines: h1 ? Math.round(h1.getBoundingClientRect().height / lh) : null,
-        h1Font: first,
-        h1FontLoaded: first ? document.fonts.check(`16px ${first}`) : true,
-        sceneMounted: !!document.querySelector('.scene, [data-region="globe"]') ? !!document.querySelector('canvas') : null,
-        canvasReady: document.querySelector('canvas') ? document.querySelector('canvas').dataset.ready === 'true' : null,
-      };
-    });
-    const tag = (m) => `${name}: ${m}`;
-    if (probe.overflowX > 1) failures.push(tag(`horizontal overflow of ${probe.overflowX}px`));
-    if (probe.ctaBottom === null) warnings.push(tag('no [data-cta] or .btn found; fold check skipped'));
-    else if (probe.ctaBottom > probe.viewportH) failures.push(tag(`primary CTA ends at ${probe.ctaBottom}px, below the ${probe.viewportH}px fold`));
-    const maxLines = name === 'mobile' ? 4 : 3;
-    if (probe.h1Lines && probe.h1Lines > maxLines) failures.push(tag(`h1 wraps to ${probe.h1Lines} lines (max ${maxLines})`));
-    if (!probe.h1FontLoaded) failures.push(tag(`display font "${probe.h1Font}" not loaded (fallback font in use)`));
-    if (probe.sceneMounted === false) failures.push(tag('3D scene wrapper present but no canvas mounted (CSS fallback is showing)'));
-    if (probe.canvasReady === false) failures.push(tag('canvas never reported data-ready=true (textures/shaders did not finish)'));
-    if (errors.some((e) => !/Failed to load resource/.test(e))) failures.push(tag(`page errors: ${errors.filter((e) => !/Failed to load resource/.test(e)).slice(0, 2).join(' | ')}`));
-    if (errors.some((e) => /Failed to load resource/.test(e))) warnings.push(tag('some resources failed to load (check fonts/CDN)'));
-    if (!Object.keys(regions).length) regions.page = [0, 0, d.viewport.width, d.viewport.height];
+    const probe = await page.evaluate(PROBE_SOURCE);
+    const r = evaluateProbe(name, probe, errors);
+    failures.push(...r.failures); warnings.push(...r.warnings);
     const png = join(out, `${name}.png`);
     await page.screenshot({ path: png });
-    const receipt = {
-      run_id: runId, iteration, url, route: new URL(url).pathname || '/',
-      viewport: [d.viewport.width, d.viewport.height], dpr: 1, theme, state: 'default', scroll: [0, 0],
-      captured_at: new Date().toISOString(), source_revision: before, regions,
-    };
-    writeFileSync(join(out, `${name}.capture.json`), JSON.stringify(receipt, null, 2));
+    writeFileSync(join(out, `${name}.capture.json`), JSON.stringify(receiptFor({ runId, iteration, url, probe, theme, fingerprint: before }), null, 2));
     written.push({ name, png, errors });
     await context.close();
   }
@@ -127,38 +89,7 @@ try {
 }
 
 writeFileSync(join(out, 'checks.json'), JSON.stringify({ iteration, failures, warnings }, null, 2));
-const ITEMS = [
-  ['subject', 'Can you name the main subject within 1 second?'],
-  ['scale', 'Title or subject is dominant (title line >= 12% of viewport height, or subject >= 35% of width)'],
-  ['material', 'Light, reflection and shadow agree; nothing black, plastic or pasted-on'],
-  ['complete-fold', 'Title, sub-copy and CTA all visible in the first screen; subject not accidentally cropped'],
-  ['color', '1 main + 1 accent + neutrals; accent used in 2-3 places'],
-  ['typography', 'Display font has character and is actually loaded; contrast with body font'],
-  ['negative-space', 'Breathing room between copy and subject; overlaps are deliberate and readable'],
-  ['rhythm', 'The first transition changes the layout relationship'],
-  ['mobile', 'Recomposed, not shrunk: subject still the focus, CTA reachable, title <= 4 lines'],
-  ['motion', 'One primary motion; reduced-motion shows a static final state'],
-];
-const rel = (w) => w.png.replace(/.*captures/, 'captures');
-const review = [
-  `# Wow review — iteration ${iteration}`,
-  '',
-  '> Look at BOTH screenshots first. Score each item 0-2 and write what you actually saw (>= 12 chars).',
-  '> Then run: python scripts/wow_gate.py <this file>',
-  '',
-  `viewed: desktop=${rel(written[0])} mobile=${rel(written[1])}`,
-  '',
-  `Automated checks: ${failures.length ? 'FAILED' : 'passed'}${failures.map((f) => '\n- ' + f).join('')}${warnings.map((f) => '\n- (warning) ' + f).join('')}`,
-  '',
-  '| # | item | score | what I saw |',
-  '| --- | --- | --- | --- |',
-  ...ITEMS.map(([k, q], i) => `| ${i + 1} | ${k} | | |`),
-  '',
-  'Questions:',
-  ...ITEMS.map(([k, q], i) => `${i + 1}. ${k} — ${q}`),
-  '',
-].join('\n');
-writeFileSync(join(out, 'wow-review.md'), review);
+writeFileSync(join(out, 'wow-review.md'), reviewMarkdown({ iteration, desktopPng: written[0].png, mobilePng: written[1].png, failures, warnings }));
 
 const after = snapshot().project_revision.fingerprint;
 if (after !== before) console.error('WARNING: project files changed during capture; discard these captures and retake.');
@@ -170,8 +101,8 @@ for (const w of written) {
 console.log(failures.length ? `\nAUTOMATED CHECKS FAILED (${failures.length}):` : '\nautomated checks passed');
 failures.forEach((f) => console.log('  x ' + f));
 warnings.forEach((f) => console.log('  ! ' + f));
-console.log(`\nNext: view both PNGs, fill ${join(out, 'wow-review.md')}, then run: python ${join(here, 'wow_gate.py')} <that file>`);
+console.log(`\nNext: view both PNGs, fill ${join(out, 'wow-review.md')}, then run: node ${join(here, 'replica.mjs')} gate <that file>`);
 console.log('\nThen register what you actually looked at, e.g.:');
 for (const w of written) {
-  console.log(`  python ${join(here, 'evidence.py')} add --run ${run} --path ${w.png} --id impl-${w.name}-${iteration} --type screenshot --role implementation --capture ${w.png.replace(/\.png$/, '.capture.json')} --observer agent --iteration ${iteration}`);
+  console.log(`  python ${evidence} add --run ${run} --path ${w.png} --id impl-${w.name}-${iteration} --type screenshot --role implementation --capture ${w.png.replace(/\.png$/, '.capture.json')} --observer agent --iteration ${iteration}`);
 }

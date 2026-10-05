@@ -15,7 +15,7 @@ $ui-reference-to-code
 复刻这个 Pinterest 作品的首屏：<Pin 链接或截图>。要 3D 特效，品牌叫 Nocturne。
 ```
 
-流程：取参考 → Replica Card → `replica.mjs init` 生成 R3F 脚手架（`hero` / `globe`）→ 需要素材时 `assets list` 经你确认 → 实现首屏 → `replica.mjs shoot` 取证并自动检查 → 填写 wow-review → `replica.mjs gate` 给出退出码。适配 Claude Code / Codex / 其他 harness 见 [HARNESS_ADAPTERS](docs/HARNESS_ADAPTERS.md)，Codex 对照试验见 [CODEX_TRIAL](docs/CODEX_TRIAL.md)。细则见 [Wow Playbook](references/wow-playbook.md)，模板见 [templates/r3f-hero](templates/r3f-hero/README.md)。
+流程：取参考 → Replica Card → `replica.mjs init` 生成 R3F 脚手架（`hero` / `globe`）→ 需要素材时 `assets list` 经你确认 → 实现首屏 → `replica.mjs shoot` 取证并自动检查 → 填写 wow-review → `replica.mjs gate` 给出退出码。必须用浏览器自动化真实渲染（Codex：ego-browser / ego-lite / playwright；Claude Code：浏览器窗格）；素材缺口用 GPT 生图补，见 [Image Generation](references/image-generation.md)。适配 Claude Code / Codex / 其他 harness 见 [HARNESS_ADAPTERS](docs/HARNESS_ADAPTERS.md)，Codex 对照试验见 [CODEX_TRIAL](docs/CODEX_TRIAL.md)。细则见 [Wow Playbook](references/wow-playbook.md)，模板见 [templates/r3f-hero](templates/r3f-hero/README.md)。
 
 ## 能做什么
 

@@ -53,6 +53,8 @@ body {
   filter: blur(40px);
 }
 .scene { position: absolute; inset: 0; z-index: -1; }
+/* generated / photographic backdrop: sits under the 3D subject and fades toward the copy side */
+.bgimg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: -3; opacity: .6; -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 55%); mask-image: linear-gradient(90deg, transparent 0%, #000 55%); }
 .scene canvas { touch-action: pan-y; }
 /* CSS silhouette: painted first, stays under the canvas, and is the whole subject if WebGL fails */
 .fallback {

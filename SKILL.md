@@ -2,10 +2,10 @@
 name: ui-reference-to-code
 description: "将截图、网站或 Pinterest 等设计参考转为艺术方向、构图与字体策略、代码（含 React Three Fiber 3D 特效）及可追溯的浏览器 QA。用于一键复刻参考首屏、参考研究、截图还原、网站借鉴、现有 UI 改版和审美打磨；适配当前技术栈与业务内容。触发词：复刻、一键复刻、Pinterest、做个酷炫首页、3D 首屏、replica。"
 metadata:
-  version: "3.5.0"
+  version: "3.6.0"
 ---
 
-# UI Reference to Code v3.5 — Aesthetic Director
+# UI Reference to Code v3.6 — Aesthetic Director
 
 把值得采用的参考转成有视觉主张的页面：Intent → Taste Curation → Visual Thesis / Aesthetic DNA → Art Direction → Composition → Hero Review → Implementation → Aesthetic Critique → Evidence QA。支持先选一个可复刻的参考模板，再提炼构图规则并原创翻译到用户项目。
 
@@ -33,6 +33,16 @@ metadata:
 
 实现模式需要真实桌面与手机浏览器观察和相关功能操作。多轮任务使用 [Browser Validation](references/browser-validation.md)：先建 run 和 scoped preservation baseline；每次截图记录 route、URL、CSS viewport、DPR、theme、state、scroll、timestamp、source revision 和 region IDs。先实际查看图像，再注册为 evidence artifact，并在 QA 里通过 `artifact_id` 引用。
 
+## 浏览器自动化与生图（强制优先级）
+
+**实现类任务必须用真实浏览器渲染并看图**，不接受“构建通过”。选浏览器工具按下面顺序，用第一个可用的：
+
+1. **harness 自带的浏览器自动化**：Codex 用当前可用的浏览器技能（ego-browser / ego-lite、`playwright`、`chatcut-web-browser` 等，以技能列表里实际存在的为准）；Claude Code 用内置浏览器窗格或 Playwright。用它打开预览、等 3D 就绪、截桌面与手机图，并在页面里执行 `node scripts/replica.mjs probe` 输出的脚本，把结果存成 JSON，再 `replica.mjs checks ...` 生成 `checks.json` 与 `wow-review.md`。
+2. **`replica.mjs shoot`**（Playwright）：一条命令完成截图、自动检查、回执。
+3. 人类截图：只能得到 `unreviewed`，除非人类也填写了评分。
+
+**素材缺口用生图补，不要用渐变色块糊弄**：背景氛围、产品场景、纹理等可用 GPT 图像模型生成。优先用 harness 内置生图工具（Codex 的 `image_gen`），否则 `replica.mjs image`；**付费前先给用户看请求并等同意**；logo / 真实人物 / 复制参考图一律不生成。流程见 [Image Generation](references/image-generation.md)。有公开真实素材的（如地球贴图）先用 `assets list`。
+
 ## One-Click Replica（默认入口）
 
 用户给出 Pinterest Pin / 截图 / 网址，并说“复刻 / 做成 3D 首屏”时，不再逐项追问，按下面默认值直接跑完整条链；只有缺参考图、要下载文件或要写入既有项目时才停下确认。所有步骤都通过同一个入口 `node scripts/replica.mjs <init|assets|shoot|gate|qa>`，是否通过**只看脚本退出码**，不看自述。
@@ -46,7 +56,7 @@ metadata:
 4. **素材**：需要贴图等二进制素材时 `replica.mjs assets list --pack <name>`，把清单给用户并**等明确同意**，再 `assets fetch ... --yes`（校验 sha256）。不得静默下载，也不得因为没有素材就退化成渐变色块了事。
 5. **首屏实现**：只改 `theme.ts` / `data/` / `styles.css` / `scene/HeroScene.tsx`，实现 Header + Hero + First Transition，写 scene contract。
 6. **取证与返工（每轮都做）**：
-   1. `replica.mjs shoot --url <预览> --run <run> --iteration N` → 桌面+手机截图 + `checks.json`（折叠线、标题行数、字体、WebGL 是否挂载等自动检查）+ 空白的 `wow-review.md`。
+   1. 有 Playwright：`replica.mjs shoot --url <预览> --run <run> --iteration N`；否则用 harness 浏览器截图并跑 `probe` / `checks`。产出桌面+手机截图 + `checks.json`（折叠线、标题行数、字体、WebGL 是否挂载等自动检查）+ 空白的 `wow-review.md`。
    2. **先修自动检查里的失败项**，再谈审美。
    3. **实际查看**两张 PNG，填写 `wow-review.md`（10 项各 0–2 分，每项写出你在图里看到的内容），`evidence.py add --observer agent` 登记。
    4. `replica.mjs gate <wow-review.md>`：退出码 0 accepted / 1 needs-polish（给出最弱两项）/ 2 incomplete / 3 无效。修最弱两项后再来一轮。

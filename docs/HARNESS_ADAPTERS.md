@@ -23,12 +23,30 @@
 ```text
 你有一个本地 skill：<skill 目录>/SKILL.md。收到“复刻这个设计 / Pinterest 链接 / 做 3D 首屏”时：
 1. 先读 SKILL.md 的 One-Click Replica 一节，再读 references/wow-playbook.md。
-2. 只用 `node <skill>/scripts/replica.mjs` 提供的 init / assets / shoot / gate 子命令，不要自己手写截图或评分流程。
+2. 只用 `node <skill>/scripts/replica.mjs` 提供的 init / assets / shoot / probe / checks / image / gate 子命令，不要自己手写截图或评分流程。
+   必须用浏览器自动化真实渲染（Codex：ego-browser / ego-lite / playwright；Claude Code：浏览器窗格）。
 3. 每轮改完必须：shoot -> 实际查看桌面与手机两张 PNG -> 填写 wow-review.md -> gate。
 4. 自动检查（折叠线、标题行数、字体、WebGL 挂载）失败时，先修它，再谈审美。
-5. 下载任何文件前，先 `assets list` 给我看清单并等我明确同意。
+5. 下载文件前先 `assets list`、生成图片前先 `image --dry-run`，给我看清单/费用并等我明确同意。素材缺口用生图补，不要用渐变色块糊弄。
 6. 你不能查看图片时，不得给出 accepted，只能报告 unreviewed。
 ```
+
+## 浏览器自动化（任何 harness 都要用）
+
+| Harness | 首选 | 备选 |
+| --- | --- | --- |
+| Codex | 当前可用的浏览器技能（ego-browser / ego-lite、`playwright`、`chatcut-web-browser`；以技能列表为准） | `replica.mjs shoot` |
+| Claude Code | 内置浏览器窗格（`preview_start` + 截图） | `replica.mjs shoot` |
+| 其他 | 自带浏览器工具或 Playwright MCP | 人类截图（只能 `unreviewed`） |
+
+用 harness 浏览器时的固定动作：打开预览 → 桌面宽度（≥1280）执行 `node scripts/replica.mjs probe` 的输出并保存 JSON，截图；窗口缩到约 390 宽再做一次 → `replica.mjs checks --out <dir> --desktop-probe ... --mobile-probe ... --desktop-png ... --mobile-png ...`。检查规则只有一份实现（`scripts/page_checks.mjs`），不论走哪条浏览器路线结果一致。
+
+## 生图
+
+| Harness | 做法 |
+| --- | --- |
+| Codex | 优先内置 `image_gen`；生成后 `replica.mjs image --record-only` 记来源 |
+| 其他 | `replica.mjs image`（需要 `OPENAI_API_KEY`；先 `--dry-run`，用户同意费用后 `--yes`） |
 
 ## 视觉能力不足时
 
@@ -37,6 +55,6 @@
 
 ## 兼容性约定（改 skill 时保持）
 
-1. 不依赖任何 harness 专有工具名；工具差异只出现在 `references/tool-routing.md`。
+1. 不依赖任何 harness 专有工具名；工具差异只出现在 `references/tool-routing.md` 和本文件。
 2. 脚本只依赖 Python 标准库与 Node 内置模块（Playwright 例外，且可替换）。
 3. 所有“是否通过”的判断必须来自脚本退出码，而不是 agent 自述。

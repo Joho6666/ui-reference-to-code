@@ -13,7 +13,7 @@ function webglAvailable() {
 }
 
 export function App() {
-  const { colors, fonts, copy, hero } = theme;
+  const { colors, fonts, copy, hero, assets } = theme;
   const [gl, setGl] = useState(false);
   const [ready, setReady] = useState(false);
 
@@ -42,6 +42,7 @@ export function App() {
       </header>
 
       <section className={`hero${ready ? ' gl-ready' : ''}`} id="hero" data-region="hero">
+        {assets.heroImage && <img className="bgimg" src={assets.heroImage} alt="" aria-hidden />}
         <div className="fallback" aria-hidden />
         {gl && (
           <div className="scene" aria-hidden>
