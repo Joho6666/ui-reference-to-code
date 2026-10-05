@@ -13,6 +13,8 @@ metadata:
 
 先读 [任务模式](references/task-modes.md)，记录 `mode / source / modifiers / resume / target / scope / reference-policy`。
 
+当目标页面与上一次项目类型明显不同（例如后台、配置器、活动页或编辑型商城）时，先读 [UI Capability Matrix](references/capability-matrix.md)，选择一个新的压力维度并记录对应的证明状态；不要只用 landing page 的截图推断 Skill 已覆盖所有 UI。
+
 - A Reference Research 只研究；B Screenshot to Code 和 C Website Reference 从图或网页制作；D Existing Redesign 改现有项目。
 - E Pixel Fidelity 要求匹配源图；F Inspiration 要求按采用的设计意图创新。E/F 冲突时分别限定区域或先明确近期目标。
 - “继续”先读 `.ui-design/record.md` 并核实当前代码。用户最新范围优先，不编造历史。
