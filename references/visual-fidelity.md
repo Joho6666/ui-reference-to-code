@@ -4,6 +4,8 @@ Compare only a source the task actually adopted: a reference screenshot for Pixe
 
 ## Pixel signal
 
+Reference Essence 与 Aesthetic Score 的评审见 [Aesthetic Review](aesthetic-review.md)。本文件继续定义原有 QA v2 的 Fidelity/功能标准；这些分数不表示原创性、节奏或记忆点已经达标。E 保真不能因为加入审美层而自行改变用户参考；F 则按已采用方向判断。
+
 Optional `scripts/visual_diff.py` checks image sizes, reports changed-pixel ratio and changed bounding box, and saves a red difference image. A region crop is optional. The script never resizes, aligns, masks, or chooses a pass threshold for the page. Dynamic content, font rendering, animation and image crops can affect its signal; explain those conditions and visually inspect the compared images.
 
 ## QA v2 scores

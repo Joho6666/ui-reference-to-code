@@ -6,13 +6,14 @@
 2. 明确“继续”且当前任务可恢复，先读 record 与实际代码；沿用记录模式，最新用户范围覆盖旧计划。即使原 B/C 实现现已成为项目，也保留原模式及修饰项，更新 target；用户改变目标时才重新路由。记录不存在时从会话、项目及当前页面重建短 brief，不能伪造历史。
 3. 新任务有可用目标项目并要求升级其 UI，选 D；同时记录参考来自截图 B、网站 C 或多个来源。
 4. 创建界面且主要输入为截图，选 B；网站 / 可访问设计链接选 C。Figma 来源通过可用设计工具取得稿件与属性后作为设计参考处理。
+   无参考的新建任务先记 `intent: original-build / source: brief / mode: pending`，按 brief 形成 proposed direction，研究许可范围内的参考；禁止虚构 B/C 来源。创建实际项目后，后续实现与 QA 用 `D / brief / [F]`，记录这是本任务新建项目。D 此时表示对当前项目实现方向，不意味着存在旧站或参考图。实现前将用户已提供内容、必要入口及行为转成非空保留基线，遵循现有 D gate；没有旧站不是免检理由，业务事实缺失仍应标明待补。若后来取得来源则补充 source 与参考职责；不要为了满足路由给用户增加确认步骤。
 5. 加 E：用户明确“尽量还原 / 高保真 / 像素级”。加 F：用户明确“借鉴但不同 / 多参考融合 / 原创”。E 与 F 在同一区域冲突时先确定更明确的近期指令；仍冲突则询问目标，继续内容与栈分析。
 
 输出契约（以下字段每次均填写；没有项目用 `none`）：
 
 ```text
-mode: A | B | C | D
-source: screenshot | website | figma | existing-ui | mixed
+mode: A | B | C | D (original-build 准备阶段可 pending；进入实现/run 前必须落 D)
+source: screenshot | website | figma | existing-ui | mixed | brief
 modifiers: [] | [E] | [F] | [E, F scoped to different regions]
 resume: true | false
 target: actual project path | none
@@ -33,7 +34,7 @@ reference-policy: reproduce geometry | extract patterns | combine sources
 | C Website Reference | 精确 URL 与目标 | 桌面 / 手机、状态与动效观察 | 采样规格、状态矩阵、代码、浏览器比较 | 来源受限有标注；提炼规则，使用自己的内容 |
 | D Existing Redesign | 实际项目、当前页面、变更范围 | 基线、复用、改 UI、回归 | 保留清单、设计及组件映射、代码、视觉与功能证据 | 业务基线保留且相关 QA 完成 |
 | E Fidelity 修饰 | 明确还原目标与范围 | 对齐源视口与状态、逐项比较 | geometry / typography / visual / composition 差异 | 至少一次实际对照；关键评分达标 |
-| F Inspiration 修饰 | 借鉴但原创或多来源 | 找共同规则、处理冲突、原创翻译 | 来源到规则的归因、统一 tokens | 对照批准的设计意图，不以“与某来源相同”打分 |
+| F Inspiration 修饰 | 借鉴但原创或多来源 | 一个主参考统领，次参考限局部职责，原创翻译；无来源时明确 proposed | 来源到原则的归因、艺术方向及据此推导的 tokens | 对照采用的设计意图，不以“与某来源相同”打分 |
 
 Screenshot + 已有项目可路由 `D / screenshot / [E]`；无项目则 `B / screenshot / [E]`。网站 + 融合可路由 `C / website / [F]`；已有项目则 `D / website / [F]`。
 
@@ -41,6 +42,7 @@ Screenshot + 已有项目可路由 `D / screenshot / [E]`；无项目则 `B / sc
 
 - 用户只给网站名称：先自行定位并观察对应官方入口；名称有歧义或所指产品不同才补问。精确链接优先，不把搜索摘要当页面观察。
 - 网站不可访问：用用户提供的截图、已有资料或其他可访问来源，规格说明观察范围；不能称已观察手机或动效。
+- 仅有口头/文字参考描述：它是 reported brief，不是实际截图 B 或已观察网页 C；无项目时走 original-build 准备分支，有项目时走 D/brief。可以借其关系提出方向，但来源精髓和实测仍未知。
 - 无移动参考：手机版按内容和可用性设计，标记 adapted；不能把自设计手机图与不存在的原图比较。
 - 截图缺字体 / 源尺寸：估计并记录置信度，先实现可审阅版本，避免虚构 computed CSS。
 - 没有目标项目但要求实现：先检查工作区能否定位用户已有项目；确实没有时按指定页面在合适工作区创建轻量项目，对栈有偏好则沿用。产品内容缺失先形成明确标注的结构示意，补问必要业务事实；事实未补齐不能称正式内容已完成。没有目标和行动信息则补一个简短问题。

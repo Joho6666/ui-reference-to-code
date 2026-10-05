@@ -1,8 +1,12 @@
-# UI Reference to Code Skill v2.1
+# UI Reference to Code Skill v3.0 — Aesthetic Director
 
 将截图、网站、Pinterest / Behance / Figma 等 UI 参考，转成设计规格、设计系统、组件计划、代码和浏览器视觉修复。适用于 Codex 的参考研究、页面制作与已有项目改版。
 
-**Reference → Design Tokens → Components → Code → Browser Compare → Visual Repair → Handoff**
+**Reference → Art Direction → Composition → Code → Aesthetic Review → Evidence QA**
+
+v3.0 在现有工程流程之前加入参考质量筛选、一个主参考、Visual Thesis、Aesthetic DNA 和构图/字体/素材/节奏决策；视觉 landing page 先做首屏再扩展。审美评审独立于 Fidelity 和机器 QA，工程通过不能证明页面有记忆点。原有 Evidence、schema、Python helpers 与 CI 继续复用。
+
+例如“为 AI Agent 做首页”：先明确“巨型编辑式标题 + 一张主导工作流画面 + 紧凑技术标签”的方向，再原型 Nav/Hero/过渡并查看桌面与手机，发现比例、素材或节奏丢失时先修构图。完整示例见 [aesthetic-direction.md](examples/aesthetic-direction.md)；它是方向示例，实际项目要重新选择。
 
 ## 能做什么
 
@@ -42,9 +46,11 @@ Run / Evidence helpers and QA gate use Python 3 standard library. Optional image
 | C Website Reference | 观察网站规律 | 桌面 / 手机 / 状态规格、适配实现与比较 |
 | D Existing Redesign | 现有项目升级 UI | 保留基线、组件复用、代码与相关功能 / 视觉检查 |
 | E Pixel Fidelity | B/C/D 的高保真修饰 | 匹配条件的参考 / 实现差异报告 |
-| F Inspiration | B/C/D 的原创灵感修饰 | 多来源归因、统一原创设计系统 |
+| F Inspiration | B/C/D 的原创灵感修饰 | 主参考统领、局部归因、具体原创方向 |
 
 已有目标项目选 D 并保留截图 / 网站来源。只研究优先于实现；“继续”先读 record 并核对代码。E/F 是修饰项，可作用于不同区域，冲突时明确当前目标。
+
+无参考新建先按 brief 提出方向并标注 reference pending；创建实际项目后用 D 跟踪本任务新建页面与内容基线。具体路由见 [task-modes.md](references/task-modes.md)，不虚构网站或截图来源。
 
 ## Examples
 
@@ -77,12 +83,15 @@ $ui-reference-to-code
 ```mermaid
 flowchart TD
     A[Mode + Brief + Existing Baseline] --> B[Observe and Decompose Reference]
-    B --> C{Research only?}
+    B --> L[Taste Curation and Primary Reference]
+    L --> M[Visual Thesis, DNA and Art Direction]
+    M --> C{Research only?}
     C -->|Yes| D[Reference Board and Implementation Notes]
     C -->|No| E[Design Tokens and Local Component Map]
-    E --> F[Implement in Current Stack]
+    E --> N[Hero Prototype and Aesthetic Review]
+    N --> F[Implement in Current Stack]
     F --> G[Desktop and Mobile Browser Evidence]
-    G --> H[Compare, Classify, Score]
+    G --> H[Aesthetic Critique and Engineering QA]
     H -->|Known defects| I[Repair and Capture Again]
     I --> H
     H -->|Evidence missing| J[Unverified Handoff and Recovery Action]
@@ -166,6 +175,9 @@ SKILL.md                         # concise workflow entry point
 agents/openai.yaml               # discoverable skill metadata
 references/
   task-modes.md                  # modes, precedence, input/output
+  aesthetic-intelligence.md      # curation, thesis, DNA, essence, safe-design cues
+  art-direction.md               # composition, typography, imagery, rhythm, hero-first
+  aesthetic-review.md            # separate aesthetic judgement and polish loop
   reference-decomposition.md     # measurable reference specification
   visual-translation.md          # tokens, stack, components, records
   research-and-assets.md         # source evidence and asset provenance

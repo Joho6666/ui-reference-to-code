@@ -1,6 +1,6 @@
 # Visual Translation — Tokens、组件、技术栈与记录
 
-输入：brief、Reference Design Spec、目标项目清单及 UI 基线。输出：Design Tokens、Component Map、Implementation Plan；跨页面复用时保存 design-system。
+输入：brief、Reference Design Spec、[Art Direction](art-direction.md)、目标项目清单及 UI 基线。输出：Design Tokens、Component Map、Implementation Plan；tokens 必须实现视觉关系，组件树不能反过来决定构图。
 
 ## 1. 检测现有栈和保留基线
 
@@ -11,6 +11,8 @@
 ## 2. Reference → Design Tokens
 
 给每项 token 标来源属性、selected value、采用理由、桌面 / 手机策略和 unknown 的处理。值可沿用现有设计系统；有意改编要注明 adapted，而不是测得。
+
+补充其关联的审美原则：标题占屏比例、display/body 关系、主素材权重、区域留白/密度、signature motif。只在区域间应共享的值上统一；一个 section spacing token 不能抹平已计划的 loud/quiet 节奏。下面的数值只演示语法，不是审美默认值。
 
 以下是**格式示例，数值为假设，不能当本项目测量结果**：
 
@@ -35,7 +37,7 @@
 
 必须生成重点元素的映射，简单改动用几行表即可：
 
-| Reference Element | Local Component / 文件 | Implementation | States / responsive | Preservation |
+| Reference Element / region_id / design principle | Local Component / 文件 | Implementation | States / responsive | Preservation |
 | --- | --- | --- | --- | --- |
 | R1 hero CTA | ButtonPrimary → existing Button | existing API + project theme token | focus/disabled/loading | 原 CTA 目标与提交行为 |
 | R1 showcase card | ProjectCard → existing card or new | CSS grid + semantic link | focus/hover/touch stack | 原项目链接、描述与阶段 |
@@ -43,7 +45,7 @@
 
 复用判定：现有 API 与语义匹配就复用；仅视觉不同用样式/variant；新增结构才新增组件。原生站的 component map 可映射语义区块与 CSS/JS 文件，不强制 JSX。Next/SSR 的交互留在必要客户端区域；Vue/Svelte 采用本栈状态与生命周期。
 
-实现计划写 `region → files → dependency (if any) → behavior preserved → check`。先改布局和字体，再图片与控件，最后动效；避免全局 override 层层叠加以掩盖错误布局。
+实现计划写 `region → composition/principle → files → dependency (if any) → behavior preserved → check`。视觉 landing page 先原型 Nav/Hero/First Transition，按 [Hero Gate](aesthetic-review.md#hero-gate) 检查实际构图与素材再展开；局部任务只原型相关区域。主资产与字形在首屏阶段就要到位，不能完成整页后再用占位图填补视觉重量。布局/字体/素材关系稳定后细化控件与必要动效。
 
 ## 4. 同源多页设计系统
 
@@ -63,7 +65,7 @@ Local implementation/token file mapping; exceptions & reasons
 
 每种效果回答“哪个参考状态或业务目标要求它”。大量渐变、玻璃、发光、卡片 hover、区域入场、超大圆角、蓝紫配色、抽象球和低信息密度均不是默认参数。无依据时采用已建立的布局、字体、边框与必要状态反馈；不要删除真实内容来制造留白。
 
-F 模式提炼多个来源共性并作原创组合；E 模式优先源几何和视觉重量，资源不可用时说明替代影响。重要操作应稳定，不被 sticky/parallax 或装饰覆盖。
+F 模式以一个 primary 统领构图、字形和节奏，局部补充必须说明职责；E 模式优先源几何、视觉重量与参考精髓，资源不可用时说明替代影响。按 [Safe Design Detector](aesthetic-intelligence.md#safe-design-detector) 检查是否所有区域同等重量；需要强视觉主张的页面不能只靠一致性和无 bug 判断完成。重要操作应稳定，不被 sticky/parallax 或装饰覆盖。
 
 ## 6. 轻量状态保存
 
@@ -76,6 +78,8 @@ F 模式提炼多个来源共性并作原创组合；E 模式优先源几何和�
 | design-system.md | 同源多页或跨组件共享 tokens |
 | component-map.md | 多区域 / 组件及复用决定 |
 | implementation-plan.md | 多阶段实现或依赖顺序 |
+| art-direction.md | 需要跨轮保留 thesis、参考职责、DNA 与各 region 构图/节奏 |
+| runs/<run-id>/aesthetic-review-<iteration>.md | 首屏或整页截图审美判断，独立于 qa.json |
 | qa.md / qa.json | 多轮差异、分数及证据；JSON 用于 QA gate |
 | record.md | 需要跨轮恢复时；链接其余已存在文件 |
 
@@ -85,9 +89,11 @@ record 最小模板：
 Current mode/source/modifiers/scope; brief and target project
 Actual stack/start command/version; preservation baseline
 References/spec/token/component-map links (only existing artifacts)
+Adopted thesis / primary and exceptions / direction record; hero verdict and scope
 Assets & data source/status
 Completed changes and files
 QA iteration/state/screenshots/operations/remaining differences
+Aesthetic verdict + capture links + highest-impact remaining critique
 Next action + why; unresolved inputs/capability limits
 Publishing scope/status when applicable
 ```

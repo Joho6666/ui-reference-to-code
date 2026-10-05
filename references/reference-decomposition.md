@@ -1,6 +1,19 @@
 # Reference Decomposition — 从可见证据到设计规格
 
-输入：可查看参考图 / 页面、任务 brief、采样环境。输出：Reference Design Spec，足以让实现者决定尺寸、组件、响应式与动效，而不是只描述感觉。
+输入：可查看参考图 / 页面、任务 brief、采样环境和参考角色。输出：Reference Design Spec；先保留 [Aesthetic DNA](aesthetic-intelligence.md#aesthetic-dna-and-reference-essence) 的视觉关系，再记录尺寸、组件、响应式与动效。
+
+## Aesthetic translation
+
+重点区域用四段推理，而非直接把外观列成 tokens：
+
+```text
+Reference Observation: 大标题接近半个视口，小标签只在边缘辅助；标 measured/estimated。
+Aesthetic Interpretation: 极端比例制造海报式权威，标签不会抢走第一焦点。
+Design Principle: 单一主元素占据视觉重量，支持信息保持次要。
+Implementation Rule: 根据真实文本/字形试排大字与紧凑标签；先验证占屏比例、换行和可读性。
+```
+
+每条带 `reference_id / region_id / evidence / confidence / desktop → mobile`。将“关系失效的信号”也记下：例如标题与标签缩成相近尺寸、主图被替成装饰背景、每节均用同一轮廓。一个 140px/10px 的观察可揭示强比例，最终数值须服从实际语言、可访问性和目标视口，不机械照抄。未知字体不妨碍推断有证据的比例，但不能伪造字形身份。
 
 ## 1. 固定采样条件
 
@@ -46,6 +59,8 @@ motion.duration | unknown | card | static frame | none | observe video before ma
 # Reference Design Spec — R1
 采样：来源 / 证据路径 / viewport / DPR / scroll / theme / state
 观察范围与未知项：
+Primary/Secondary/Functional 角色与职责：
+Visual Thesis / Aesthetic DNA / Reference Essence（或关联方向记录）：
 区块结构及阅读顺序：
 Layout：property/value/evidence/confidence/region
 Typography：同上
@@ -54,7 +69,7 @@ Imagery：尺寸/比例/焦点/来源/使用依据
 Interaction：触发/状态/反馈/键盘与触屏
 Motion：触发/时长/easing/方向/stagger/终态/fallback；未知项
 桌面与手机差异：observed 或 adapted
-可迁移规则：区域 / 规则 / 业务用途
+可迁移规则：region_id / observation → interpretation → principle → implementation / 业务用途
 ```
 
-推进条件：重点区域有结构、尺寸依据、字体层级、颜色角色和图片策略；未知项明确，能翻译成实现选择。多参考按来源记录冲突后选一种统一规则，避免每个区块照搬不同系统。
+推进条件：重点区域有主导视觉、阅读顺序、关键比例、构图与素材关系，以及结构/尺寸依据；未知项明确。多参考冲突服从 primary 的方向，secondary 只补局部，不把差异平均成一个普通系统。

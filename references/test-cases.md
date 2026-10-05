@@ -14,7 +14,30 @@ Test observable behavior and meaningful invariants. Report the actual execution 
 | T6 | Multiple pages from one source | Shared tokens with recorded page variants | Conflicting duplicated systems |
 | T7 | Desktop source only | Mark mobile adaptation as such | Claims mobile pixel fidelity |
 
-## Deterministic tests
+## Aesthetic behavior cases (v3.0)
+
+Run these as realistic skill tasks, with raw artifacts rather than the expected answer. Inspect the output decisions and generated page where applicable; matching phrases in SKILL.md is not a behavior test. Store generated work outside the repository. Aesthetic reports are Agent judgements; a named test case is not a passed evaluation.
+
+| ID | Raw input / context | Observable expectation | Failure signal |
+| --- | --- | --- | --- |
+| A1 Generic AI SaaS | “做一个 AI Agent 网站。” + available reference/brief | Select or honestly defer primary; concrete thesis, dominant subject and hero prototype before whole-page generation | Default purple glow/orb/glass/three cards without design reasoning; invented reference visit |
+| A2 Too Safe | Page with centered hero, equal rounded grids and uniform section spacing | Diagnose combined safe cues; direction-specific structural correction and preserved content | Random decoration, symmetry treated as an automatic defect, or only margin tweaks |
+| A3 Reference Essence | Supplied huge-title/tiny-label reference and similar-font/color implementation with compressed scale contrast | Explain the lost proportion and repair it; keep essence distinct from pixel fidelity | Declares faithful because palette/fonts match |
+| A4 Missing Visual Asset | Photography-dominant reference, implementation with only gradient | Identify missing dominant subject; plan available material/focal crop or disclose blocking asset | Replaces the photo with a circle and marks imagery complete |
+| A5 Section Repetition | Five consecutive heading + paragraph + three-card sections | Give actual section IDs and differentiated information roles/transitions | New colors on the same five grids, content deleted to create whitespace |
+| A6 Mobile | Strong desktop composition compressed to phone | Redesign phone hierarchy, crop, wraps and signature; preserve essential content/actions | Only reduces font sizes, checks overflow and calls mobile accepted |
+
+Also verify boundaries: E preserves source decisions, A produces research only, local repairs keep scope, absent screenshots give null scores/unreviewed, a functional dense UI is not forced into an expressive landing page, and a machine verified status cannot override aesthetic needs-polish. Use the [direction example](../examples/aesthetic-direction.md) to check the complete chain without treating its hypothetical observations as evidence.
+
+### v3.0 execution record
+
+2026-10-04: an independent Agent performed all six raw-brief design tasks in isolated local storage without reading this expected-answer table. The outputs addressed scale loss, missing photography, section roles and phone recomposition; unavailable visuals stayed null/unreviewed. This was design reasoning, not six rendered-site passes. The execution exposed an absent no-reference creation route and a stale F instruction to average common rules; both were corrected and rechecked. A paired prototype also exposed the distinction between verbal reference descriptions and actual B screenshots, now explicit in routing.
+
+Two separate Agents used v2.1 and v3.0 respectively for the same personal AI portfolio brief, title, capability content and available material. Both generated only Nav/Hero/First Transition. Ego Lite captured hero and transition at 1440 and 390 CSS px, 1000px height and DPR 1: eight initial images, viewed and registered with the unchanged evidence helper; both runs validated with no artifact issues. HTTP CTA interactions reached the two original anchor targets, with no document overflow at the tested widths.
+
+Night Eye initially rewrote HTTP captures into dark colors. Final light-theme captures rendered the exact self-contained HTML bytes through data URLs in the same Ego Lite page, isolating extension injection; no browser preference or source styling was changed. Data-URL anchor navigation was restricted, so HTTP interaction observations and isolated visual captures are separate evidence, not one end-to-end environment. Independent image review found the v3 mobile sculpture too cropped; v3 then reduced the mobile SVG to the viewport and captured a changed iteration, registered with no evidence issues. No actual reference screenshot exists, so reference essence remains unknown. This single paired generation is exploratory; it cannot establish universal improvement or full-site engineering acceptance. Generated artifacts and detailed critiques remain outside the public skill repository.
+
+## Deterministic suite
 
 ```sh
 python3 -m unittest discover -s tests -v

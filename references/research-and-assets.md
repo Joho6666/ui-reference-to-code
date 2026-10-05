@@ -2,6 +2,10 @@
 
 ## 根据问题选来源
 
+先诊断当前弱点，再选研究类型。页面普通时看 art direction、editorial、image-led、experimental grid；字体普通时看 typographic/editorial 网站、字体厂商、杂志或 fashion 布局；构图保守时看作品集、非对称/横向/沉浸构图；素材弱时看摄影、产品呈现、3D 或插画。Pinterest、SiteInspire、Landbook、Recent、Behance、Awwwards 和真实产品站都是可选入口，依据可访问内容选择，不能固定混合知名 SaaS 品牌。
+
+浏览重点是 hero、字形与换行、section transitions、图像 crop、导航、滚动状态、signature interaction 和手机构图。少量可解释的来源优于大量未分析截图。按 [Taste Curator](aesthetic-intelligence.md#taste-curator) 比较候选质量后指定 Primary / Secondary / Functional 及各自作用域；不要在视觉决策前平均融合。
+
 | 来源 | 适合回答的问题 | 需要提取的内容 |
 | --- | --- | --- |
 | Pinterest | 首屏构图、排版、材质、短视频动效有什么方向？ | Pin 直接链接、画面与关键状态、外链作者、实际可观察范围 |
@@ -23,9 +27,9 @@
 
 参考表建议字段：
 
-| ID / 来源链接 | 证据类型及观察范围 | 借鉴规则 | 用于哪个区域 | 实现方式 / 难度 | 加载与交互取舍 |
+| ID / 来源链接 / 参考角色 | 证据类型及观察范围 | 审美强项、弱项与采用理由 | 用于哪个区域 / 借鉴原则 | 实现方式 / 难度 | 加载与交互取舍 |
 | --- | --- | --- | --- | --- | --- |
-| 自行填写实际来源 | 上线页面 / 视频帧 / 概念稿 / 缩略图 / 文档；附未确认事项 | 用一句话解释可迁移的规则 | 对应本项目结构 | CSS、组件、图表或 3D | 桌面、触屏、减少动态效果及替代内容 |
+| 自行填写实际来源；primary/secondary/functional | 上线页面 / 视频帧 / 概念稿 / 缩略图 / 文档；附未确认事项 | 具体比例、字体、构图或节奏观察；与 brief 的关系 | 对应 region ID；保留的关系 | CSS、组件、图表或 3D | 桌面、触屏、减少动态效果及替代内容 |
 
 关键词从页面用途、受众和主视觉方向生成，例如企业作品集用 `AI portfolio light editorial website`，有明确参考时优先查看原链接。
 
