@@ -178,6 +178,7 @@ references/
   aesthetic-intelligence.md      # curation, thesis, DNA, essence, safe-design cues
   art-direction.md               # composition, typography, imagery, rhythm, hero-first
   aesthetic-review.md            # separate aesthetic judgement and polish loop
+  polish-loop-playbook.md        # mandatory structure/material/behavior repair passes
   reference-decomposition.md     # measurable reference specification
   visual-translation.md          # tokens, stack, components, records
   research-and-assets.md         # source evidence and asset provenance

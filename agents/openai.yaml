@@ -1,4 +1,4 @@
 interface:
-  display_name: "UI 审美指导与落地 v3.0"
-  short_description: "从参考筛选、艺术方向到构图与实现，结合审美评审及浏览器证据打磨界面"
-  default_prompt: "请用 $ui-reference-to-code 筛选参考、建立具体艺术方向并适配当前项目，先评审首屏，再完成整页审美打磨与可核验的浏览器 QA。"
+  display_name: "UI 审美指导与 3D 模板复刻 v3.3"
+  short_description: "从 Pinterest、ThreeUI 和真实产品页筛选模板，经过多轮构图、素材、3D 动效与浏览器审美 QA"
+  default_prompt: "请用 $ui-reference-to-code 先从 Pinterest 选主参考，再用 ThreeUI、Three.js 或 Spline 补充可实现的 3D 方案，提炼 Replica Card 和 scene contract，复刻首屏，至少完成 Structure 与 Material 两轮截图对照返工；有交互时再完成 Behavior 轮，并分别记录工程 QA 与审美 verdict。"
