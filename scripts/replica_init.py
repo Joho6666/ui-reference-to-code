@@ -14,7 +14,7 @@ import subprocess
 import sys
 
 ROOT = Path(__file__).resolve().parent.parent
-TEMPLATE = ROOT / 'templates' / 'r3f-hero'
+TEMPLATES = {'hero': ROOT / 'templates' / 'r3f-hero', 'globe': ROOT / 'templates' / 'r3f-globe'}
 VARIANTS = ('glass-knot', 'liquid-blob', 'orbit-cards')
 IGNORE = shutil.ignore_patterns('node_modules', 'dist', '.vite')
 
@@ -59,13 +59,14 @@ asset_license: "procedural geometry, no external assets"
 """
 
 
-def scaffold(out, name, variant):
+def scaffold(out, name, variant, template):
     if out.exists() and any(out.iterdir()):
         raise SystemExit('refusing to write into non-empty folder: %s' % out)
-    shutil.copytree(TEMPLATE, out, ignore=IGNORE, dirs_exist_ok=True)
+    shutil.copytree(TEMPLATES[template], out, ignore=IGNORE, dirs_exist_ok=True)
     theme = out / 'src' / 'theme.ts'
     text = theme.read_text(encoding='utf-8')
-    text = re.sub(r"variant: '[a-z-]+' as SceneVariant", "variant: '%s' as SceneVariant" % variant, text)
+    if template == 'hero':
+        text = re.sub(r"variant: '[a-z-]+' as SceneVariant", "variant: '%s' as SceneVariant" % variant, text)
     if name:
         text = re.sub(r"brand: '[^']*'", "brand: %s" % json.dumps(name, ensure_ascii=False).replace('"', "'"), text, count=1)
     theme.write_text(text, encoding='utf-8')
@@ -79,13 +80,19 @@ def main():
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument('--out', required=True, type=Path)
     p.add_argument('--name', default='')
-    p.add_argument('--variant', default='glass-knot', choices=VARIANTS)
+    p.add_argument('--template', default='hero', choices=sorted(TEMPLATES), help='hero: glass/liquid/cards subject; globe: night Earth with switchable places')
+    p.add_argument('--variant', default='glass-knot', choices=VARIANTS, help='hero template only')
     p.add_argument('--run-url', help='also create an evidence run for this preview URL (needs git or selected files)')
     a = p.parse_args()
-    if not TEMPLATE.is_dir():
-        raise SystemExit('template missing: %s' % TEMPLATE)
-    scaffold(a.out, a.name, a.variant)
-    result = {'project': str(a.out), 'variant': a.variant, 'next': ['cd %s' % a.out, 'npm install', 'npm run dev']}
+    if not TEMPLATES[a.template].is_dir():
+        raise SystemExit('template missing: %s' % TEMPLATES[a.template])
+    scaffold(a.out, a.name, a.variant, a.template)
+    steps = ['cd %s' % a.out, 'npm install', 'npx playwright install chromium']
+    if a.template == 'globe':
+        steps.insert(0, 'python scripts/fetch_assets.py list --pack earth   # show the user, get a yes, then fetch with --yes')
+    result = {'project': str(a.out), 'template': a.template, 'next': steps + ['npm run dev']}
+    if a.template == 'hero':
+        result['variant'] = a.variant
     if a.run_url:
         # evidence fingerprints tracked + non-ignored files; a repo keeps node_modules/dist out of that set
         if shutil.which('git') and not (a.out / '.git').exists():

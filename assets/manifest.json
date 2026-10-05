@@ -1,0 +1,32 @@
+{
+  "$comment": "Binary assets are never committed. Fetch with scripts/fetch_assets.py after the user approves the listed files.",
+  "packs": {
+    "earth": {
+      "source": "https://github.com/mrdoob/three.js/tree/dev/examples/textures/planets",
+      "license": "three.js repository is MIT; planet imagery is NASA-derived public-domain data (see three.js examples credits)",
+      "base_url": "https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/textures/planets/",
+      "files": [
+        {
+          "name": "earth_night_4096.jpg",
+          "bytes": 267061,
+          "sha256": "17a868f79c7be40fa1f557e6114d7889d907f18f7a3fce51f33b0b830ef50242"
+        },
+        {
+          "name": "earth_day_4096.jpg",
+          "bytes": 473093,
+          "sha256": "cd7712d3e891425d9948ea5ac18d3bb1e7e834ea038188587897e689a7b35d0f"
+        },
+        {
+          "name": "earth_clouds_1024.png",
+          "bytes": 226113,
+          "sha256": "5f9612e4f4040975a195dd0d14e89c9ba72bd6bdd22e1454db4fcefb92d37d38"
+        },
+        {
+          "name": "earth_specular_2048.jpg",
+          "bytes": 223421,
+          "sha256": "2df48906732d7a458b2d0a7cdec51a829262307c6bdee4cfdf079a4dd7c71c69"
+        }
+      ]
+    }
+  }
+}

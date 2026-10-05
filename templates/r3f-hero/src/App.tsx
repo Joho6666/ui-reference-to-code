@@ -53,7 +53,7 @@ export function App() {
           <h1>{copy.headline.map((l, i) => <span key={l} style={{ display: 'block' }}>{i === copy.headline.length - 1 ? <em>{l}</em> : l}</span>)}</h1>
           <p className="sub">{copy.sub}</p>
           <div className="actions">
-            <a className="btn" href="#">{copy.cta} →</a>
+            <a className="btn" data-cta href="#">{copy.cta} →</a>
             <a className="btn ghost" href="#">{copy.ctaSecondary}</a>
           </div>
         </div>

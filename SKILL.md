@@ -2,10 +2,10 @@
 name: ui-reference-to-code
 description: "将截图、网站或 Pinterest 等设计参考转为艺术方向、构图与字体策略、代码（含 React Three Fiber 3D 特效）及可追溯的浏览器 QA。用于一键复刻参考首屏、参考研究、截图还原、网站借鉴、现有 UI 改版和审美打磨；适配当前技术栈与业务内容。触发词：复刻、一键复刻、Pinterest、做个酷炫首页、3D 首屏、replica。"
 metadata:
-  version: "3.4.0"
+  version: "3.5.0"
 ---
 
-# UI Reference to Code v3.4 — Aesthetic Director
+# UI Reference to Code v3.5 — Aesthetic Director
 
 把值得采用的参考转成有视觉主张的页面：Intent → Taste Curation → Visual Thesis / Aesthetic DNA → Art Direction → Composition → Hero Review → Implementation → Aesthetic Critique → Evidence QA。支持先选一个可复刻的参考模板，再提炼构图规则并原创翻译到用户项目。
 
@@ -35,16 +35,25 @@ metadata:
 
 ## One-Click Replica（默认入口）
 
-用户给出 Pinterest Pin / 截图 / 网址，并说“复刻 / 做成 3D 首屏”时，不再逐项追问，按下面默认值直接跑完整条链；只有缺参考图、要花钱或要写入既有项目时才停下确认。
+用户给出 Pinterest Pin / 截图 / 网址，并说“复刻 / 做成 3D 首屏”时，不再逐项追问，按下面默认值直接跑完整条链；只有缺参考图、要下载文件或要写入既有项目时才停下确认。所有步骤都通过同一个入口 `node scripts/replica.mjs <init|assets|shoot|gate|qa>`，是否通过**只看脚本退出码**，不看自述。
 
 1. **取参考**：按 [Wow Playbook §5](references/wow-playbook.md#5-pinterest-参考的获取claude-code--codex-通用) 取得一张可实际查看的参考图；取不到就请用户截图，不凭搜索结果写“已观察”。
-2. **拆解**：实际查看后，填 `.ui-design/replica-card.md`（实测/估计/未知分开）并选一个 Signature Moment 与 3D variant（见 Wow Playbook §1）。至少 5 条绑定截图区域的规则。
-3. **脚手架**：新项目运行 `python scripts/replica_init.py --out <dir> --name <品牌> --variant <variant> --run-url <预览地址>`（模板 [r3f-hero](templates/r3f-hero/README.md)：Vite + React + R3F，内置视口自适应、玻璃背光、CSS 回退、reduced-motion、本地字体）。已有项目则按 D 模式把相同做法接入当前技术栈，不套模板。
-4. **首屏实现**：只改 `theme.ts` / `styles.css` / `HeroScene.tsx`，实现 Header + Hero + First Transition，写 scene contract。
-5. **取证与返工**：`node scripts/capture.mjs --url <预览> --run <run> --iteration N` 取桌面与手机截图 → **实际查看** → 用 `evidence.py add --observer agent` 注册 → 按 [Wow Playbook §2](references/wow-playbook.md#2-视觉验收wow-gate) 打分 → 修最低的两项 → 再取证。至少 Structure、Material 两轮；有交互再加 Behavior。
-6. **交付**：报告 Wow Gate 总分与 verdict（accepted / needs-polish / unreviewed）、工程 QA 状态、3D 回退与手机结果、未验证项。通过后把可复用关系写入 `.ui-design/pattern-library.md`。
+2. **拆解**：实际查看后，填 `.ui-design/replica-card.md`（实测/估计/未知分开），选一个 Signature Moment 与模板，至少 5 条绑定截图区域的规则。
+3. **脚手架**：`node scripts/replica.mjs init --out <dir> --template hero|globe --name <品牌> --run-url <预览地址>`。
+   - `hero`：玻璃 / 液态金属 / 环绕卡片主体，见 [r3f-hero](templates/r3f-hero/README.md)。
+   - `globe`：夜景地球从底边升起、多地点切换聚焦，见 [r3f-globe](templates/r3f-globe/README.md)。参考是星球 / 地图 / 城市 / 旅行类时优先。
+   - 已有项目则按 D 模式把同样做法接入当前技术栈，不套模板。
+4. **素材**：需要贴图等二进制素材时 `replica.mjs assets list --pack <name>`，把清单给用户并**等明确同意**，再 `assets fetch ... --yes`（校验 sha256）。不得静默下载，也不得因为没有素材就退化成渐变色块了事。
+5. **首屏实现**：只改 `theme.ts` / `data/` / `styles.css` / `scene/HeroScene.tsx`，实现 Header + Hero + First Transition，写 scene contract。
+6. **取证与返工（每轮都做）**：
+   1. `replica.mjs shoot --url <预览> --run <run> --iteration N` → 桌面+手机截图 + `checks.json`（折叠线、标题行数、字体、WebGL 是否挂载等自动检查）+ 空白的 `wow-review.md`。
+   2. **先修自动检查里的失败项**，再谈审美。
+   3. **实际查看**两张 PNG，填写 `wow-review.md`（10 项各 0–2 分，每项写出你在图里看到的内容），`evidence.py add --observer agent` 登记。
+   4. `replica.mjs gate <wow-review.md>`：退出码 0 accepted / 1 needs-polish（给出最弱两项）/ 2 incomplete / 3 无效。修最弱两项后再来一轮。
+   5. 至少 Structure、Material 两轮；有交互再加 Behavior。
+7. **交付**：报告 Wow Gate 结果与 verdict、自动检查状态、3D 回退与手机结果、未验证项。通过后把可复用关系写入 `.ui-design/pattern-library.md`。
 
-默认技术路线是 Three.js / React Three Fiber；CSS 3D 作回退，Spline / ThreeUI 仅在环境确有授权且用户点名时使用。预览服务、浏览器与截图用当前运行环境的工具（Claude Code：内置浏览器或 Playwright；Codex：可用的浏览器技能），缺失时按 `unverified` 交付，不虚报通过。
+不能查看图片时，不得给出 accepted，只能报告 `unreviewed`（见 [Harness adapters](docs/HARNESS_ADAPTERS.md)）。默认技术路线是 Three.js / React Three Fiber，CSS 3D 作回退，Spline / ThreeUI 仅在环境确有授权且用户点名时使用。预览服务、浏览器与截图用当前运行环境的工具；缺失时按 `unverified` 交付，不虚报通过。
 
 ## Template Replica mode
 

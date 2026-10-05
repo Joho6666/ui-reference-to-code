@@ -8,14 +8,14 @@ v3.0 在现有工程流程之前加入参考质量筛选、一个主参考、Vis
 
 例如“为 AI Agent 做首页”：先明确“巨型编辑式标题 + 一张主导工作流画面 + 紧凑技术标签”的方向，再原型 Nav/Hero/过渡并查看桌面与手机，发现比例、素材或节奏丢失时先修构图。完整示例见 [aesthetic-direction.md](examples/aesthetic-direction.md)；它是方向示例，实际项目要重新选择。
 
-## 一键复刻（v3.4）
+## 一键复刻（v3.5）
 
 ```text
 $ui-reference-to-code
 复刻这个 Pinterest 作品的首屏：<Pin 链接或截图>。要 3D 特效，品牌叫 Nocturne。
 ```
 
-流程：取参考 → Replica Card → `scripts/replica_init.py` 生成可运行的 R3F 脚手架 → 实现首屏 → `scripts/capture.mjs` 取桌面/手机证据 → Wow Gate 打分返工。细则见 [Wow Playbook](references/wow-playbook.md)，模板见 [templates/r3f-hero](templates/r3f-hero/README.md)。
+流程：取参考 → Replica Card → `replica.mjs init` 生成 R3F 脚手架（`hero` / `globe`）→ 需要素材时 `assets list` 经你确认 → 实现首屏 → `replica.mjs shoot` 取证并自动检查 → 填写 wow-review → `replica.mjs gate` 给出退出码。适配 Claude Code / Codex / 其他 harness 见 [HARNESS_ADAPTERS](docs/HARNESS_ADAPTERS.md)，Codex 对照试验见 [CODEX_TRIAL](docs/CODEX_TRIAL.md)。细则见 [Wow Playbook](references/wow-playbook.md)，模板见 [templates/r3f-hero](templates/r3f-hero/README.md)。
 
 ## 能做什么
 
