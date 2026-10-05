@@ -8,7 +8,7 @@
 
 | 触发条件 | 工具 / 技能 | 返回给工作流 | 无工具时 |
 | --- | --- | --- | --- |
-| 要观察参考网站 / 当前页面 | 可用浏览器技能（如 ego-browser） | 采样截图、DOM、状态与操作 | 可用用户图像 / 当前资料，未知观察标记 unknown |
+| 要观察参考网站 / 当前页面 | 可用浏览器工具（Claude Code：内置浏览器 / Playwright；Codex：ego-browser 等） | 采样截图、DOM、状态与操作 | 可用用户图像 / 当前资料，未知观察标记 unknown |
 | 主视觉、字体与构图需要方向 | frontend-design | 有依据的视觉主张 | 依据 brief 与源规格自行形成方案 |
 | 要系统化 UX、tokens 或响应式 | ui-ux-pro-max | design-system / domain / stack 建议 | 使用本技能翻译模板与已有组件 |
 | 用户明确点名 frontend-skill | 读取当前版本指令 | 该技能规定的设计辅助 | 未点名不自动调用当前 explicit-only 版本 |
@@ -16,7 +16,7 @@
 | 真实数据或关系用图比表更清楚 | ECharts | 注册所需图表、数据定义、交互 | 本地文字 / 表格 / SVG 关系图 |
 | 3D 明确增强主题或必要交互 | Spline | 场景、导出、体积及替代状态 | 静态 / 原创图像及 CSS |
 | 用户给 Figma 稿或要求设计稿 / 系统迁移 | 当前环境相应 Figma 技能与工具 | 指定稿件 / 节点、截图、组件属性、资源 | 用户已给图像；不宣称读到 inaccessible 稿件 |
-| 实现后的视觉 / responsive 观察 | 浏览器自动化 | 桌面 / 手机证据与比较 | 按 Browser Validation 交付 unverified |
+| 实现后的视觉 / responsive 观察 | `scripts/capture.mjs`（Playwright）或浏览器自动化 | 桌面 / 手机证据与比较 | 按 Browser Validation 交付 unverified |
 | 当前任务需要发布 | 所选托管技能 / 工具 | 构建 / 上传状态及成功 URL | 保留可审阅本地结果，明确发布限制 |
 
 通常一个主要设计技能加针对性资料即可。已批准方案只需修局部时，直接用当前 tokens 和组件，不重新调研。

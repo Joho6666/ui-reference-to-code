@@ -1,11 +1,11 @@
 ---
 name: ui-reference-to-code
-description: "将截图、网站或设计参考转为艺术方向、构图与字体策略、代码及可追溯的浏览器 QA。用于参考研究、截图还原、网站借鉴、现有 UI 改版和审美打磨；适配当前技术栈与业务内容。"
+description: "将截图、网站或 Pinterest 等设计参考转为艺术方向、构图与字体策略、代码（含 React Three Fiber 3D 特效）及可追溯的浏览器 QA。用于一键复刻参考首屏、参考研究、截图还原、网站借鉴、现有 UI 改版和审美打磨；适配当前技术栈与业务内容。触发词：复刻、一键复刻、Pinterest、做个酷炫首页、3D 首屏、replica。"
 metadata:
-  version: "3.3.0"
+  version: "3.4.0"
 ---
 
-# UI Reference to Code v3.3 — Aesthetic Director
+# UI Reference to Code v3.4 — Aesthetic Director
 
 把值得采用的参考转成有视觉主张的页面：Intent → Taste Curation → Visual Thesis / Aesthetic DNA → Art Direction → Composition → Hero Review → Implementation → Aesthetic Critique → Evidence QA。支持先选一个可复刻的参考模板，再提炼构图规则并原创翻译到用户项目。
 
@@ -33,6 +33,19 @@ metadata:
 
 实现模式需要真实桌面与手机浏览器观察和相关功能操作。多轮任务使用 [Browser Validation](references/browser-validation.md)：先建 run 和 scoped preservation baseline；每次截图记录 route、URL、CSS viewport、DPR、theme、state、scroll、timestamp、source revision 和 region IDs。先实际查看图像，再注册为 evidence artifact，并在 QA 里通过 `artifact_id` 引用。
 
+## One-Click Replica（默认入口）
+
+用户给出 Pinterest Pin / 截图 / 网址，并说“复刻 / 做成 3D 首屏”时，不再逐项追问，按下面默认值直接跑完整条链；只有缺参考图、要花钱或要写入既有项目时才停下确认。
+
+1. **取参考**：按 [Wow Playbook §5](references/wow-playbook.md#5-pinterest-参考的获取claude-code--codex-通用) 取得一张可实际查看的参考图；取不到就请用户截图，不凭搜索结果写“已观察”。
+2. **拆解**：实际查看后，填 `.ui-design/replica-card.md`（实测/估计/未知分开）并选一个 Signature Moment 与 3D variant（见 Wow Playbook §1）。至少 5 条绑定截图区域的规则。
+3. **脚手架**：新项目运行 `python scripts/replica_init.py --out <dir> --name <品牌> --variant <variant> --run-url <预览地址>`（模板 [r3f-hero](templates/r3f-hero/README.md)：Vite + React + R3F，内置视口自适应、玻璃背光、CSS 回退、reduced-motion、本地字体）。已有项目则按 D 模式把相同做法接入当前技术栈，不套模板。
+4. **首屏实现**：只改 `theme.ts` / `styles.css` / `HeroScene.tsx`，实现 Header + Hero + First Transition，写 scene contract。
+5. **取证与返工**：`node scripts/capture.mjs --url <预览> --run <run> --iteration N` 取桌面与手机截图 → **实际查看** → 用 `evidence.py add --observer agent` 注册 → 按 [Wow Playbook §2](references/wow-playbook.md#2-视觉验收wow-gate) 打分 → 修最低的两项 → 再取证。至少 Structure、Material 两轮；有交互再加 Behavior。
+6. **交付**：报告 Wow Gate 总分与 verdict（accepted / needs-polish / unreviewed）、工程 QA 状态、3D 回退与手机结果、未验证项。通过后把可复用关系写入 `.ui-design/pattern-library.md`。
+
+默认技术路线是 Three.js / React Three Fiber；CSS 3D 作回退，Spline / ThreeUI 仅在环境确有授权且用户点名时使用。预览服务、浏览器与截图用当前运行环境的工具（Claude Code：内置浏览器或 Playwright；Codex：可用的浏览器技能），缺失时按 `unverified` 交付，不虚报通过。
+
 ## Template Replica mode
 
 当用户说“去 Pinterest 找一个好看的 UI、参考一个作品、复刻一个模板、以后每次都按这个方法做”时，启用此模式；已有项目仍使用 `D / mixed / [F]`，新项目先按 brief 建立方向。
@@ -49,7 +62,7 @@ metadata:
 
 详细字段、参考卡模板和审美评分表见 [Template Replica Playbook](references/template-replica-playbook.md)。
 
-当页面需要 3D 模型、Shader 或动画特效时，阅读 [3D and Motion Playbook](references/3d-motion-playbook.md)。它会区分 Pinterest 的审美参考、ThreeUI 的实现参考、Three.js 的 API 依据、Spline 的可编辑场景和 Codrops 的实验性动效；先写 scene contract，再选择 CSS 3D、Three.js / React Three Fiber、Spline 或 ThreeUI adaptation。
+当页面需要 3D 模型、Shader 或动画特效时，先读 [Wow Playbook](references/wow-playbook.md)（验收分与实测教训），再读 [3D and Motion Playbook](references/3d-motion-playbook.md)。它会区分 Pinterest 的审美参考、ThreeUI 的实现参考、Three.js 的 API 依据、Spline 的可编辑场景和 Codrops 的实验性动效；先写 scene contract，再选择 CSS 3D、Three.js / React Three Fiber、Spline 或 ThreeUI adaptation。
 
 按 [审美评审](references/aesthetic-review.md) 检查整页节奏、Reference Essence、手机重新编排和 SAFE_DESIGN_WARNING，给出针对截图的删减、比例、构图或素材修复。Aesthetic Score 独立记录，不并入 Fidelity Score 或 QA v2 schema；缺观察时分数为 null。按 [Visual Fidelity](references/visual-fidelity.md) 记录工程比较与差异，修复后重新捕获。通过 `python3 scripts/qa_gate.py <run>/qa-<iteration>.json` 取得机器状态，并按 [Handoff](references/review-and-handoff.md) 分别报告工程 QA 与审美评审结果；机器 verified 不能代表审美达标。
 

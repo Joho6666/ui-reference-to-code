@@ -8,6 +8,15 @@ v3.0 在现有工程流程之前加入参考质量筛选、一个主参考、Vis
 
 例如“为 AI Agent 做首页”：先明确“巨型编辑式标题 + 一张主导工作流画面 + 紧凑技术标签”的方向，再原型 Nav/Hero/过渡并查看桌面与手机，发现比例、素材或节奏丢失时先修构图。完整示例见 [aesthetic-direction.md](examples/aesthetic-direction.md)；它是方向示例，实际项目要重新选择。
 
+## 一键复刻（v3.4）
+
+```text
+$ui-reference-to-code
+复刻这个 Pinterest 作品的首屏：<Pin 链接或截图>。要 3D 特效，品牌叫 Nocturne。
+```
+
+流程：取参考 → Replica Card → `scripts/replica_init.py` 生成可运行的 R3F 脚手架 → 实现首屏 → `scripts/capture.mjs` 取桌面/手机证据 → Wow Gate 打分返工。细则见 [Wow Playbook](references/wow-playbook.md)，模板见 [templates/r3f-hero](templates/r3f-hero/README.md)。
+
 ## 能做什么
 
 - 按用户范围选择研究、截图实现、网站借鉴或已有 UI 改版，并叠加高保真 / 原创灵感模式。
@@ -24,8 +33,13 @@ v3.0 在现有工程流程之前加入参考质量筛选、一个主参考、Vis
 首次安装到未存在的技能目录：
 
 ```sh
+# Codex
 git clone https://github.com/Joho6666/ui-reference-to-code.git ~/.codex/skills/ui-reference-to-code
+# Claude Code
+git clone https://github.com/Joho6666/ui-reference-to-code.git ~/.claude/skills/ui-reference-to-code
 ```
+
+一键复刻额外需要 Node 18+（模板与 `scripts/capture.mjs`；截图需 `npm i -D playwright`）。
 
 已有同名目录时先核对来源和本地改动；从本仓库 clone 的安装可使用 `git pull --ff-only` 更新。若技能列表尚未刷新，开始新的 Codex 对话或重启应用。
 
